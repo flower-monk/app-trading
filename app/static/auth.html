@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>App Trading · 账户访问</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="stylesheet" href="/static/admin.css" />
+    <link rel="stylesheet" href="/static/apple-polish.css" />
+  </head>
+  <body class="auth-page">
+    <main class="auth-shell">
+      <section class="auth-brand" aria-label="App Trading">
+        <div class="brand-mark">AT</div>
+        <div>
+          <strong>App Trading</strong>
+          <span>指标盯盘与量化研究</span>
+        </div>
+      </section>
+      <section class="auth-panel">
+        <p class="eyebrow" id="authEyebrow">Secure Workspace</p>
+        <h1 id="authTitle">登录工作台</h1>
+        <p id="authDescription" class="auth-description">使用系统账号进入行情和资源管理中心。</p>
+        <form id="authForm" class="auth-form">
+          <label>
+            <span>用户名</span>
+            <input id="authUsername" name="username" type="text" minlength="3" maxlength="40" autocomplete="username" required />
+          </label>
+          <label id="displayNameField" hidden>
+            <span>显示名称</span>
+            <input id="authDisplayName" name="display_name" type="text" maxlength="80" autocomplete="name" />
+          </label>
+          <label>
+            <span>密码</span>
+            <input id="authPassword" name="password" type="password" minlength="10" maxlength="200" autocomplete="current-password" required />
+          </label>
+          <button id="authSubmit" class="primary-button" type="submit">登录</button>
+          <small id="authStatus" role="status"></small>
+        </form>
+      </section>
+    </main>
+    <script src="/static/auth.js"></script>
+  </body>
+</html>

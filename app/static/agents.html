@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>App Trading · Agent 管理</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="stylesheet" href="/static/admin.css" />
+    <link rel="stylesheet" href="/static/agents.css" />
+    <link rel="stylesheet" href="/static/apple-polish.css" />
+  </head>
+  <body class="agent-page">
+    <div class="agent-shell">
+      <aside class="agent-sidebar">
+        <a class="brand agent-brand" href="/"><div class="brand-mark">AT</div><div><strong>App Trading</strong><span>Agent Operations</span></div></a>
+        <nav class="agent-nav" aria-label="Agent 管理导航">
+          <button class="active" type="button" data-section="registry"><span>◎</span>Agent 配置<b id="navAgentCount">0</b></button>
+          <button type="button" data-section="runs"><span>↻</span>运行记录<b id="navRunCount">0</b></button>
+          <button type="button" data-section="proposals"><span>✓</span>审批建议<b id="navProposalCount">0</b></button>
+          <button type="button" data-section="providers"><span>⌘</span>模型服务<b id="navProviderCount">0</b></button>
+        </nav>
+        <div class="agent-side-links"><a href="/admin">资源管理</a><a href="/">返回盯盘工作台</a></div>
+      </aside>
+
+      <main class="agent-main">
+        <header class="agent-topbar">
+          <div><p class="eyebrow">Agent Control Plane</p><h1 id="sectionTitle">Agent 配置</h1></div>
+          <div class="agent-account"><span id="agentUserLabel"></span><button id="agentLogout" class="icon-button" type="button" title="退出登录">⇥</button></div>
+        </header>
+
+        <section id="agentMetrics" class="agent-metrics" aria-label="Agent 运行概览"></section>
+        <div id="agentNotice" class="resource-notice" role="status"></div>
+
+        <section id="registrySection" class="agent-section active">
+          <div class="agent-registry">
+            <aside class="agent-list-panel">
+              <div class="agent-list-head"><div><strong>Agent 实例</strong><span>内置模板与自定义实例</span></div><button id="newAgent" class="icon-button admin-write" type="button" title="新建 Agent">＋</button></div>
+              <div class="agent-filter"><input id="agentSearch" type="search" placeholder="搜索 Agent" /><select id="agentStatus"><option value="">全部状态</option><option value="enabled">运行中</option><option value="disabled">已停用</option></select></div>
+              <div id="agentList" class="agent-list"></div>
+            </aside>
+
+            <form id="agentForm" class="agent-editor">
+              <div id="agentEmpty" class="agent-empty">选择一个 Agent 查看配置。</div>
+              <div id="agentEditorContent" hidden>
+                <div class="agent-editor-head">
+                  <div><span id="agentTypeLabel" class="mini-badge neutral"></span><h2 id="agentNameHeading"></h2><p id="agentDescriptionHeading"></p></div>
+                  <div class="agent-command-bar admin-write"><button id="cloneAgent" class="text-button" type="button">复制</button><button id="testAgent" class="text-button" type="button">测试</button><button id="runAgent" class="primary-button" type="button">运行</button></div>
+                </div>
+                <div class="agent-tabs" role="tablist"><button class="active" type="button" data-editor-tab="general">基础配置</button><button type="button" data-editor-tab="prompt">提示词</button><button type="button" data-editor-tab="data">数据与触发</button><button type="button" data-editor-tab="actions">通知与动作</button></div>
+                <div class="agent-tab active" data-editor-panel="general">
+                  <div class="agent-form-grid">
+                    <label><span>名称</span><input id="agentName" required maxlength="100" /></label>
+                    <label><span>运行模式</span><select id="agentMode"><option value="rule">规则引擎</option><option value="llm">LLM</option><option value="hybrid">混合</option></select></label>
+                    <label class="wide"><span>说明</span><textarea id="agentDescription" rows="2"></textarea></label>
+                    <label><span>模型服务</span><select id="agentProvider"><option value="">不使用模型</option></select></label>
+                    <label><span>运行状态</span><span class="toggle-line"><input id="agentEnabled" type="checkbox" />启用 Agent</span></label>
+                    <label><span>规则降级</span><span class="toggle-line"><input id="agentFallback" type="checkbox" />模型异常时使用规则结果</span></label>
+                    <label><span>配置模板</span><input id="agentTemplate" disabled /></label>
+                  </div>
+                  <label class="json-field"><span>模板专属参数 JSON</span><textarea id="agentSettings" rows="10" spellcheck="false"></textarea></label>
+                </div>
+                <div class="agent-tab" data-editor-panel="prompt">
+                  <label class="prompt-field"><span>系统提示词</span><textarea id="agentSystemPrompt" rows="9"></textarea></label>
+                  <label class="prompt-field"><span>任务提示词</span><textarea id="agentTaskPrompt" rows="9"></textarea></label>
+                </div>
+                <div class="agent-tab" data-editor-panel="data">
+                  <div class="agent-form-grid">
+                    <label><span>标的范围</span><select id="agentScope"><option value="watchlist">自选列表</option><option value="all">全部可用标的</option><option value="custom">指定标的</option></select></label>
+                    <label><span>指定标的</span><input id="agentSymbols" placeholder="AAPL,NVDA,BTCUSD" /></label>
+                    <label><span>运行周期（秒）</span><input id="agentInterval" type="number" min="30" max="86400" /></label>
+                    <label><span>独立调度</span><span class="toggle-line"><input id="agentSchedule" type="checkbox" />按周期自动运行</span></label>
+                  </div>
+                  <fieldset><legend>事件触发</legend><div id="triggerOptions" class="check-grid"></div></fieldset>
+                </div>
+                <div class="agent-tab" data-editor-panel="actions">
+                  <label><span>通知渠道 ID</span><input id="agentChannels" placeholder="多个 ID 使用逗号分隔" /></label>
+                  <div class="permission-note"><strong>执行边界</strong><p>Agent 只能生成因子、预警和关注列表建议。任何资源变更都需要管理员在审批建议中确认。</p></div>
+                </div>
+                <footer class="agent-savebar"><span id="agentSaveStatus"></span><button class="primary-button admin-write" type="submit">保存配置</button></footer>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <section id="runsSection" class="agent-section"><div class="section-toolbar"><div><h2>运行记录</h2><p>检查触发来源、模型耗时、Token、输出和错误。</p></div><button id="refreshRuns" class="icon-button" type="button" title="刷新">↻</button></div><div id="runTable" class="ops-table"></div></section>
+        <section id="proposalsSection" class="agent-section"><div class="section-toolbar"><div><h2>审批建议</h2><p>资源在批准前不会发生任何变更。</p></div><select id="proposalStatus"><option value="">全部状态</option><option value="pending">待审批</option><option value="executed">已执行</option><option value="rejected">已拒绝</option><option value="failed">执行失败</option></select></div><div id="proposalList" class="proposal-list"></div></section>
+        <section id="providersSection" class="agent-section"><div class="section-toolbar"><div><h2>模型服务</h2><p>OpenAI 兼容连接；密钥只读取服务器环境变量。</p></div><button id="newProvider" class="primary-button admin-write" type="button">新增连接</button></div><div id="providerList" class="provider-list"></div></section>
+      </main>
+    </div>
+
+    <div id="agentModal" class="modal-backdrop" hidden><form id="agentCreateForm" class="resource-modal"><div class="panel-header compact"><h2>新建 Agent</h2><button id="closeAgentModal" class="icon-button" type="button">×</button></div><div class="resource-fields"><label><span>模板类型</span><select id="newAgentTemplate"></select></label><label><span>实例名称</span><input id="newAgentName" required /></label><label><span>说明</span><textarea id="newAgentDescription" rows="3"></textarea></label></div><div class="modal-actions"><button id="cancelAgentModal" class="text-button" type="button">取消</button><button class="primary-button" type="submit">创建</button></div></form></div>
+    <div id="providerModal" class="modal-backdrop" hidden><form id="providerForm" class="resource-modal"><div class="panel-header compact"><h2>新增模型服务</h2><button id="closeProviderModal" class="icon-button" type="button">×</button></div><div class="resource-fields"><label><span>名称</span><input id="providerName" required /></label><label><span>Base URL</span><input id="providerUrl" type="url" placeholder="https://api.example.com/v1" required /></label><label><span>模型</span><input id="providerModel" required /></label><label><span>密钥环境变量</span><input id="providerEnv" placeholder="OPENAI_API_KEY" required /></label></div><div class="modal-actions"><button id="cancelProviderModal" class="text-button" type="button">取消</button><button class="primary-button" type="submit">保存</button></div></form></div>
+    <div id="runDrawer" class="drawer-backdrop" hidden><aside class="admin-drawer"><div class="panel-header compact"><h2>运行详情</h2><button id="closeRunDrawer" class="icon-button" type="button">×</button></div><div id="runDetail" class="admin-drawer-body"></div></aside></div>
+    <script src="/static/agents.js"></script>
+  </body>
+</html>

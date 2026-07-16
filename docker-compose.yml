@@ -1,0 +1,16 @@
+services:
+  app-trading:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: app-trading:latest
+    container_name: app-trading
+    ports:
+      - "${APP_PORT:-8002}:8000"
+    environment:
+      APP_COOKIE_SECURE: "${APP_COOKIE_SECURE:-false}"
+      APP_DB_PATH: /app/app_data.db
+      OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
+    volumes:
+      - ./app_data.db:/app/app_data.db
+    restart: unless-stopped
