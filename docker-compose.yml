@@ -10,7 +10,18 @@ services:
     environment:
       APP_COOKIE_SECURE: "${APP_COOKIE_SECURE:-false}"
       APP_DB_PATH: /app/app_data.db
+      APP_CREDENTIAL_MASTER_KEY: "${APP_CREDENTIAL_MASTER_KEY:-}"
+      APP_CREDENTIAL_ASYNC_TESTS: "${APP_CREDENTIAL_ASYNC_TESTS:-true}"
       OPENAI_API_KEY: "${OPENAI_API_KEY:-}"
+      FINNHUB_API_KEY: "${FINNHUB_API_KEY:-}"
+      FINNHUB_BASE_URL: "${FINNHUB_BASE_URL:-https://finnhub.io/api/v1}"
+      TRADING_ECONOMICS_API_KEY: "${TRADING_ECONOMICS_API_KEY:-}"
+      ADANOS_API_KEY: "${ADANOS_API_KEY:-}"
+      ADANOS_API_BASE_URL: "${ADANOS_API_BASE_URL:-https://api.adanos.org}"
+      ALPHAVANTAGE_API_KEY: "${ALPHAVANTAGE_API_KEY:-}"
+      FRED_API_KEY: "${FRED_API_KEY:-}"
+      CRYPTOCOMPARE_API_KEY: "${CRYPTOCOMPARE_API_KEY:-}"
+      SEC_USER_AGENT: "${SEC_USER_AGENT:-AppTrading/0.1 contact=admin@example.com}"
     volumes:
       - ./app_data.db:/app/app_data.db
     restart: unless-stopped

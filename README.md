@@ -1,17 +1,46 @@
 # App Trading
 
-App Trading is a FastAPI-based market watch, indicator, news, AI analysis, and factor backtesting dashboard. The current codebase is a runnable prototype with mock market data and a TradingView-inspired dark workstation. This document defines the target product and technical design for evolving it into a quant-oriented monitoring platform for U.S. equities, ETFs, and major crypto assets.
+App Trading is a FastAPI-based market watch, indicator, news, AI analysis, and factor backtesting dashboard. The application uses server-side real market providers and a TradingView-inspired workstation for U.S. equities, ETFs, major indices, and crypto assets. Production APIs never synthesize missing market, news, factor, or backtest results.
 
 The product is designed for active investors, quant researchers, and semi-systematic traders who need one workspace for price action, indicators, news catalysts, AI risk prompts, and factor research. AI output is treated as research support and risk context, not as direct investment advice or default automated trading.
+
+## Project Architecture
+
+The codebase is organized as a FastAPI modular monolith. Business behavior is
+grouped by domain under `app/modules`, HTTP transport stays in `app/api/routes`,
+and application startup is assembled in `app/bootstrap`. Frontend pages and
+assets live under `app/web` and are grouped by workspace rather than kept in one
+global static directory.
+
+```text
+app/
+├── api/routes/          # Thin FastAPI HTTP and WebSocket adapters
+├── bootstrap/           # App factory, middleware, and process lifecycle
+├── core/                # Environment-independent application configuration
+├── db/                  # SQLite connection primitives
+├── modules/             # Market, news, AI, research, trading, and admin domains
+├── schemas/             # Shared request/response contracts
+├── services/            # Temporary import-compatible migration facades
+└── web/
+    ├── pages/            # Server-served application shells
+    └── static/           # core, workspace, admin, styles, and vendor assets
+```
+
+`app/main.py` is intentionally only the ASGI entry point. New business logic
+must be added to the owning domain module, not to route files or compatibility
+facades. See [`docs/architecture.md`](docs/architecture.md) for module ownership,
+dependency rules, and the staged migration policy.
 
 ## Current Prototype
 
 Implemented today:
 
-- FastAPI backend serving the page and mock APIs.
+- FastAPI backend serving the page and normalized provider APIs.
 - Dark market-watch UI with watchlist, candlestick chart, MA20/MA60 overlays, RSI/MACD summaries, simple signal filters, and symbol switching.
-- Mock symbols covering U.S. stocks, ETFs, and crypto pairs.
-- Market provider adapter interface, active-provider config, provider status API, and mock provider implementation used by watchlist, candles, indicators, and backtests.
+- Real provider symbol catalogs covering U.S. stocks, ETFs, indices, and crypto pairs.
+- Professional indicator catalog with 62 series: local trend/momentum/volatility/volume calculations, Binance Futures positioning and order-flow metrics, and FRED macro series. Finnhub symbol search extends the built-in catalog without browser-side provider calls.
+- Source-backed indicator resource panel for fundamentals, valuation, earnings, and optional social/news sentiment. Finnhub is primary, Alpha Vantage is the configured fallback, and every card exposes its provider and stale-cache state.
+- Market provider adapter interface, active-provider config, provider status API, and Finnhub/Binance/Coinbase implementations used by watchlists, candles, indicators, and backtests.
 - SQLite-backed per-provider watchlist customization with add/remove APIs and frontend controls.
 - Market breadth API and dashboard panel summarizing advance/decline, average change, RSI/trend score, signal distribution, and market-level heatmap for the active watchlist.
 - Server-side screener API and dashboard panel for filtering the active watchlist by change, RSI, trend score, signal, and market, with match reasons.
@@ -20,18 +49,29 @@ Implemented today:
 - CSV export API and panel download actions for watchlist, screener results, portfolio positions, portfolio risk contribution, and backtest summaries.
 - Coinbase public REST crypto provider for live BTC-USD and ETH-USD ticker/candles/indicator estimates, selectable from the UI.
 - Binance public REST provider skeleton for BTCUSDT and ETHUSDT; access can be region-restricted and may return HTTP 451.
-- Mock news/event APIs with chart markers, hover summaries, and clickable source links.
-- SQLite-backed RSS news source management, refresh, article deduplication, symbol mapping, and persisted chart events.
-- News detail endpoint and in-app drawer for timeline/chart-marker clicks, including AI-style summary, key points, related symbols, impact score, and original source link.
+- Persisted source-backed news/event APIs with chart markers, hover summaries, and clickable source links.
+- SQLite-backed unified information-source registry for RSS/Atom and REST adapters, with capability metadata, environment-backed authentication, health, polling, article deduplication, symbol mapping, and persisted chart events.
+- Dedicated news-source control center at `/admin/news-sources` with per-source refresh intervals, enable/disable controls, single or concurrency-limited bulk refresh, current status, next-run time, 24-hour success metrics, and 30-day run history.
+- Independent news-source scheduler with per-source execution locks. Enabled and configured sources run on their own intervals even when platform automation is disabled; overlapping manual, scheduled, and automation refreshes are skipped safely.
+- Source-aware news browsing: every persisted story exposes its source ID and name, and the news workspace supports a locally persisted multi-source filter plus one-click filtering from each story badge. The source picker searches source name, provider, and adapter with prefix/substring ranking and bounded typo tolerance. A fast refresh reloads persisted news for every user; administrators can also synchronize all or currently selected upstream sources before reloading the feed.
+- News detail endpoint and in-app drawer for timeline/chart-marker clicks, including transparent rule classification, key points, related symbols, impact score, and original source link.
+- Dedicated News Tagger Agent that classifies each article independently against the platform instrument catalog. Source-level symbols are candidate hints only; accepted primary tags drive symbol news and K-line markers, while secondary and medium-confidence tags remain visible in the detail/review workflow. Confidence thresholds default to 0.85 for automatic primary acceptance, 0.75 for accepted secondary context, and 0.60 for administrator review.
+- Multi-stage news intelligence pipeline with independently managed Event Extractor, Impact Mapper, and Impact Validator Agents. It stores macro/company event scope, taxonomy, topics, geography, macro factors, horizon, significance, novelty, event clusters, multi-target impacts, and explainable transmission paths. Direct mentions auto-apply at 0.85 confidence; derived impacts require an approved graph path, 0.90 confidence, 0.75 relevance, and impact score 70 before entering symbol feeds or K-line markers.
+- Administrator-managed news impact graph at `/admin/impact-graph`. Topic, macro-factor, country, and region exposures are proposed first and only become reusable by the Agent pipeline after explicit approval with evidence and provenance.
+- High-confidence indirect impacts without an approved path automatically become deduplicated `impact-graph` Agent proposals. The proposal records its originating article, confidence, evidence, and transmission path; approval creates an audited graph edge and immediately remaps the source article, while rejection leaves the graph unchanged.
+- Administrator-owned news symbol overrides in the news detail drawer. An override replaces all active automatic tags, supports up to five primary and eight secondary instruments, can explicitly lock an article as unrelated, and can later be released back to automatic detection. Primary tags appear in symbol feeds and K-line markers; secondary tags remain contextual only.
 - AI real-time watch panel with market monitor, news analyst, and risk sentinel insights.
+- Agent model control plane at `/admin/models` with provider presets, native OpenAI/Azure/Anthropic/Gemini protocols, OpenAI-compatible providers, local Ollama/vLLM channels, model discovery, encrypted credentials, health state, logical-model routing, priority/weight failover, metadata-only invocation logs, and administrator-only streaming chat tests.
 - AI global briefing endpoint and right-rail panel summarizing watchlist breadth, top movers, news catalysts, alerts, portfolio exposure, opportunities, risks, and next actions.
 - Factor recommendation cards, configurable backtest run form, SQLite-backed backtest persistence, metric calculation, and equity sparklines.
 - SQLite-backed factor library with default seeded factors, custom factor creation, enable/disable controls, and dynamic backtest factor selection.
 - SQLite-backed data catalog, research health gate, research dashboard summary, data-quality report, data-freshness SLA report, research coverage matrix and backfill, factor coverage matrix, factor lifecycle report, research data-lineage report, research run audit, research action plan, strategy candidate pool, maintainable strategy template library, strategy lifecycle report, strategy risk-control audit, strategy backtest monitor, strategy forward monitor, strategy validation decay report, strategy leaderboard, strategy crowding report, strategy regime-fit ranking, strategy regime admission matrix, strategy promotion gates, market-regime report, history and transition monitor, market-regime scenario risk report, market-regime exposure report, regime risk gate, research-readiness gate, filter validation, filter library scoring, filter-to-strategy coverage, filter admission pack, filter contribution diagnostics, filter stress test, regime-aware filter templates, market-regime playbook, forward-test runs, walk-forward rolling out-of-sample runs, stress-test runs, backtest benchmark comparison, backtest-to-forward consistency report, revalidation queue, trade-readiness gate, parameter sensitivity tests, parameter grid optimization, robustness matrix, strategy drift monitor, strategy allocation recommendations, factor leaderboard, factor correlation/crowding report, regime attribution report, factor admission checklist, factor admission queue, one-click factor validation pipeline, and one-click strategy validation that combines filters, backtests, forward tests, and regime checks.
-- Authenticated resource management center with administrator/viewer roles, first-run administrator setup, CSRF-protected writes, persisted sessions, full resource inventory, search, pagination, details, CSV export, soft disable/restore, bulk status changes, immutable run history, reruns, and administrator audit logs.
+- Administrator-only management center at `/admin` with one shared navigation and visual shell for operations overview, data/news sources, credentials, Agents, model services, schedules, and platform governance. Dedicated modules own business-resource writes; `/admin/resources` is limited to users, settings, audit, immutable run history, and read-only data governance.
 - SQLite-backed alert rules for price, RSI, and news-impact thresholds, with manual evaluation, triggered-state display, enable/disable, threshold update, and deletion.
 - SQLite-backed event log plus one-click automation run that refreshes news sources, evaluates alerts, records triggered alerts, and displays system events.
-- Persisted automation scheduler settings with an in-process background loop for interval-based news refresh and alert evaluation.
+- Persisted automation scheduler settings with an in-process background loop for alert evaluation and Agent event triggering; news-source polling is managed independently per source.
+- Unified scheduling center at `/admin/schedules` for platform automation, data/model health checks, ingestible news-source polling, and Agent schedules, with type/status filtering, interval editing, dependency-aware status, immediate runs, and bulk enable/disable.
+- Native financial calendar in `/market-tools` with weekly navigation, macro/earnings tabs, country, source and impact filters, actual/forecast/previous comparisons, watchlist earnings, persistent event details, high-impact reminders, and Economic Event Analyst scenarios. Free official BLS and BEA calendars are aggregated by default; every canonical event keeps source snapshots, field-level provenance and conflict flags. Finnhub remains the earnings-calendar source, while Trading Economics is optional and disabled by default.
 - SQLite-backed automation run history with status, news source count, inserted news, triggered alerts, summary, and frontend run-history display.
 - SQLite-backed webhook notification channels and delivery logs; triggered alerts can be delivered as JSON payloads to enabled webhooks, and channels can be enabled, disabled, updated, or deleted.
 - SQLite-backed simulated portfolio positions with mark-to-market valuation, unrealized PnL, long/short exposure, and frontend position management.
@@ -42,11 +82,376 @@ Implemented today:
 Target design below:
 
 - Pluggable live and historical data providers.
-- Real U.S. equity provider adapters for Polygon/Alpaca beyond the current mock and crypto providers.
-- Additional vendor/API news ingestion beyond the current RSS implementation.
-- Real AI provider integration beyond current deterministic mock Agent outputs.
+- Additional U.S. equity provider adapters for Polygon/Alpaca beyond the current Finnhub integration.
+- Additional production-grade vendor adapters and streaming feeds beyond the current Finnhub/GDELT/CryptoCompare/Alpha Vantage/FRED/RSS normalization layer.
+- Additional multimodal, embedding, and rerank adapters beyond the current text-chat model gateway.
 - Asynchronous/large-universe backtest jobs beyond the current single-symbol synchronous engine.
 - Portfolio, alerting, explainability, and research workflow extensions.
+
+### Indicator Data Architecture
+
+Indicator data is always requested from FastAPI. The browser never calls a market or indicator vendor directly.
+
+| Layer | Coverage | Source |
+| --- | --- | --- |
+| Local bar calculation | SMA/EMA/WMA/DEMA/TEMA/HMA/ALMA, Ichimoku, Supertrend, MACD, RSI, Stoch RSI, TRIX, PPO, ATR/NATR, Squeeze, OBV/PVT/NVI/PVI/KVO, and related indicators | `pandas-ta-classic` over provider OHLCV |
+| Crypto derivatives | Open interest, long/short ratios, taker buy ratio, volume delta, CVD, funding, basis, and annualized variants | Binance Futures public REST |
+| Macro chart series | Fed funds, 2Y/10Y yields, 10Y-2Y spread, CPI, unemployment | FRED REST (`FRED_API_KEY`) |
+| Fundamentals and valuation | Market cap, growth, P/E, P/B, ROE, dividend yield, beta, latest EPS surprise | Finnhub primary, Alpha Vantage fallback |
+| Sentiment snapshots | Reddit, X, news, and Polymarket bullish/activity metrics | Optional Adanos (`ADANOS_API_KEY`) |
+
+The unified data-source registry owns provider priority and availability. Configure it at `/admin/data-sources`; API secrets are edited through `/admin/credentials` and take effect without rebuilding the image. Indicator snapshots use a 10-minute SQLite cache and may serve a marked stale result for up to 24 hours after an upstream failure. Missing credentials or exhausted vendor plans produce an explicit unavailable state; no synthetic business values are generated.
+
+News-source APIs:
+
+```text
+GET   /api/news-sources
+GET   /api/news-sources/overview
+POST  /api/news-sources
+PATCH /api/news-sources/{source_id}
+POST  /api/news-sources/refresh?force=true&source_id=1&source_id=2
+POST  /api/news-sources/{source_id}/refresh
+POST  /api/news-sources/{source_id}/test
+GET   /api/news-sources/monitoring
+GET   /api/news-sources/{source_id}/runs
+GET   /api/news?source_id=1&source_id=2&symbol=AAPL&limit=30&offset=0
+GET   /api/news/{symbol}?source_id=1&source_id=2
+GET   /api/news-tagging/status
+POST  /api/news-tagging/backfill
+POST  /api/news-events/{news_id}/retag
+PUT   /api/news-events/{news_id}/symbols
+DELETE /api/news-events/{news_id}/symbols/override
+```
+
+Every newly inserted article is queued for the built-in `news_tagger` Agent. Its
+structured output stores primary/secondary relation, confidence, direction,
+evidence, origin, model, run ID, and tagging version. High-confidence primary
+tags are materialized into `news_articles.symbols`; medium-confidence tags
+create `news-tags` proposals in `/agents`. Administrators can edit and approve
+the proposed primary/secondary symbols. A 30-day backfill is intentionally
+manual and becomes available after an enabled LLM/hybrid News Tagger has a
+working model provider and credential.
+The same control also supports a local-rule backfill of every currently unlinked
+article. Rule backfills require no model credential and skip administrator-locked
+articles, including articles explicitly confirmed as having no reliable symbol.
+
+The `/news` workspace opens as an all-market, newest-first feed instead of a
+single-symbol summary. It supports an all-market/current-symbol scope switch,
+multi-source filtering, typo-tolerant source search across name/provider/adapter,
+source attribution on every article, and incremental pagination. The workspace
+does not duplicate source configuration controls: source creation, refresh
+schedules, single/bulk refresh, run history, and health monitoring remain in the
+dedicated `/news-sources` control center. Its overview endpoint combines source
+configuration and monitor state in one request. The feed refresh control reloads
+persisted news without contacting vendors. Its administrator-only sync action
+accepts the active source filter, runs the existing ingestion pipeline, reports
+fetched/inserted/failure totals, and then reloads the current feed.
+
+Initial-page loading is route aware. The news route requests its feed first and
+loads provider/settings metadata in the background; it does not open the market
+WebSocket or download chart and market-map libraries. Those assets are loaded on
+demand only when their corresponding workspace is opened.
+
+RSS/Atom failures are stored as structured diagnostics on source runs. Each
+report identifies the failing stage, assigns a stable error code, records retry
+attempts, and provides a remediation suggestion. Response evidence is limited
+to HTTP status, final hostname, content type, byte count, content hash, and
+parser position; response bodies, URL query parameters, headers, cookies, and
+credentials are never persisted. The connection test downloads and parses a
+feed without inserting articles or changing its last successful collection
+time.
+
+Indicator APIs:
+
+- `GET /api/instruments?query=...` searches built-in instruments and, when configured, Finnhub symbols.
+- `GET /api/chart/indicators?instrument_id=...` returns compatibility and provenance metadata for all chart indicators.
+- `POST /api/chart/query` returns candles and requested local, derivative, or macro series.
+- `GET /api/indicator-snapshots/{instrument_id}` returns grouped fundamental, valuation, and sentiment cards with source metadata.
+
+### Dashboard and Watchlist Workspace
+
+The default route is now `/dashboard`. Its information architecture follows the
+operational principles used by OpenStack Horizon: grouped navigation, a compact
+resource summary, explicit health states, tabular detail, and direct links from
+status to the responsible management surface. It is an application workspace,
+not a marketing landing page.
+
+Dashboard provides:
+
+- Six linked KPIs for platform health, market provider, Agents, automation,
+  news sources, and notifications.
+- Component-level health, recent system events, Agent runs, automation runs,
+  and a compact active-Watchlist summary.
+- Role-aware quick actions for refreshing news and running monitoring jobs.
+- A read-only operational view for viewer accounts; write actions remain
+  available only to administrators.
+
+`/watchlist` is a standalone resource-management page rather than a panel inside
+the market chart. It supports:
+
+- Active and disabled tabs with soft disable and restore semantics.
+- User-defined groups with color markers; deleting a non-default group moves
+  its members back to the default group.
+- Per-symbol tags and notes, search, group/market/signal filters, sortable
+  indicator columns, pagination, row actions, and bulk move/status actions.
+- A detail drawer for editing metadata without leaving the list and a direct
+  action for opening the selected symbol in the K-line workspace.
+- Live snapshot updates from the market WebSocket without reloading metadata.
+
+The complete workspace supports light and dark themes. The first visit follows
+the operating-system preference, the selected theme is cached locally for fast
+paint, and authenticated preference is persisted per account in SQLite. Chart
+canvas colors are resolved from the active theme. Dashboard performs a focused
+first-page load; the larger research workstation is loaded on first entry to a
+legacy analysis view.
+
+Relevant APIs:
+
+```text
+GET   /api/dashboard/overview
+GET   /api/watchlist/groups
+POST  /api/watchlist/groups
+PATCH /api/watchlist/groups/{group_id}
+DELETE /api/watchlist/groups/{group_id}
+GET   /api/watchlist/items
+POST  /api/watchlist/items
+PATCH /api/watchlist/items/{symbol}
+POST  /api/watchlist/items/bulk-actions
+GET   /api/auth/preferences
+PATCH /api/auth/preferences
+```
+
+SQLite migrations add `watchlist_groups`, Watchlist metadata columns
+(`group_id`, `tags`, `note`, `sort_order`, and `updated_at`), and
+`user_preferences`. Existing Watchlist rows are retained and assigned to a
+provider-specific default group.
+
+### Professional Chart Workstation
+
+The market workspace uses a locally hosted Lightweight Charts runtime and a
+backend-normalized chart API. Browsers never call market vendors directly.
+Every response includes the active provider, real-time/delayed/cache state,
+fetch time, timezone, and any fallback warning.
+
+Supported chart controls:
+
+- Intervals: `1m`, `3m`, `5m`, `15m`, `30m`, `1h`, `2h`, `4h`, `1d`,
+  `1w`, and `1mo`.
+- Ranges: `1D`, `5D`, `1M`, `3M`, `6M`, `YTD`, `1Y`, `3Y`, `5Y`, and
+  `Max`.
+- Interval and range controls enforce a meaningful chart window: `2h/4h`
+  require at least `5D`, daily candles require `1M`, weekly candles require
+  `6M`, and monthly candles require `3Y`. Incompatible buttons are disabled in
+  both directions; the UI never changes the other selection automatically.
+  The backend applies the same validation to chart queries and saved layouts.
+  Existing invalid layouts remain stored but are rejected when selected.
+- Main-chart studies: SMA, EMA, Bollinger Bands, VWAP, Ichimoku,
+  Supertrend, Donchian Channel, Keltner Channel, and Parabolic SAR.
+- Indicator panes: Volume, MACD, RSI, Stochastic, CCI, ADX/DMI, ATR, OBV,
+  MFI, ROC, Williams %R, CMF, A/D, and Force Index.
+- Crypto-perpetual metrics: open interest and change, global and top-trader
+  long/short ratios, taker buy/sell ratio, funding rate, and basis.
+- Every chart pane has a persistent TradingView-style legend. The main pane
+  shows OHLC plus main-chart studies, while each indicator pane shows its own
+  name, parameters, component colors, and value. Crosshair movement updates
+  each pane at the selected candle and restores the latest value on exit.
+
+The instrument registry covers U.S. equities and ETFs, BTC/ETH perpetuals,
+and major global indices including the Shanghai Composite, Shenzhen
+Component, CSI 300, Hang Seng, S&P 500, Nasdaq 100, Dow Jones, Russell 2000,
+VIX, FTSE 100, DAX, and Nikkei 225. Provider capability determines which
+intervals and derivative studies are enabled.
+
+Data adapters use Finnhub for configured U.S. assets, Binance USD-M Futures
+for perpetual candles and derivative statistics, and delayed public index
+data for the global index catalog. When a provider is unavailable, the
+backend can serve a recent cache or an explicitly labeled public/spot
+fallback. Derivative metrics are never synthesized from spot data.
+
+Indicator layouts are persisted per account and asset class. A layout stores
+the interval, range, pane order, visibility, colors, and parameters, and can
+be selected as the default for that asset class. Alert rules accept the same
+canonical instrument IDs, interval, indicator ID, and parameter object used
+by the chart.
+
+News events are normalized and snapped on the backend to the nearest prior
+candle. Lightweight Charts renders them as non-autoscaling native markers so
+they remain attached to time/price while avoiding price-scale distortion.
+Clicking a marker opens the existing news detail workflow.
+
+Relevant APIs:
+
+```text
+GET    /api/instruments
+GET    /api/chart/indicators
+POST   /api/chart/query
+WS     /api/stream/chart
+GET    /api/chart/layouts
+POST   /api/chart/layouts
+PATCH  /api/chart/layouts/{layout_id}
+DELETE /api/chart/layouts/{layout_id}
+```
+
+### Unified Information Sources
+
+The original RSS-only resource has been expanded into a unified information
+source registry while retaining the `/api/news-sources` compatibility API.
+The design follows OpenStock's composition model: use specialized providers for
+their strongest capabilities instead of forcing market data, visualization,
+news, filings, macro releases, and sentiment through one vendor.
+
+Every source records:
+
+- Category: `market`, `news`, `filing`, `macro`, `sentiment`, `social`, or
+  `alternative`.
+- Transport and adapter: RSS/Atom, REST API, WebSocket, widget, or reference.
+- Provider, endpoint, region, language, symbol scope, and capabilities.
+- Authentication mode and the environment-variable name containing the key;
+  secret values are never persisted or returned by the API.
+- Poll interval, priority, reliability weight, enabled state, last successful
+  fetch, and last error.
+
+Fresh databases receive disabled catalog entries for:
+
+| Source | Category | Adapter | Key |
+| --- | --- | --- | --- |
+| Finnhub Market News | News/company/quotes | REST | `FINNHUB_API_KEY` |
+| Trading Economics | Economic calendar/consensus forecasts | REST | `TRADING_ECONOMICS_API_KEY` |
+| U.S. Bureau of Labor Statistics | Official U.S. release calendar | iCalendar | None |
+| U.S. Bureau of Economic Analysis | Official GDP, PCE and trade release calendar | JSON | None |
+| Federal Reserve | Official FOMC meeting and decision calendar | HTML | None |
+| National Bureau of Statistics of China | Official China statistical release calendar | HTML table | None |
+| European Central Bank | Official euro-area statistical release calendar | HTML | None |
+| TradingView Market Widgets | Charts/heatmap/timeline | Widget | None |
+| Adanos | Reddit/X/news/Polymarket sentiment | REST | `ADANOS_API_KEY` |
+| SEC EDGAR Latest Filings | Regulatory filings | Atom | None |
+| Federal Reserve Press Releases | Macro/rates | RSS | None |
+| GDELT Global Financial News | Global multilingual news | REST | None |
+| CryptoCompare Digital Asset News | Crypto news | REST | Optional `CRYPTOCOMPARE_API_KEY` |
+| Alpha Vantage News Sentiment | News and ticker sentiment | REST | `ALPHAVANTAGE_API_KEY` |
+| FRED Economic Releases | Macro releases | REST | `FRED_API_KEY` |
+
+The ingest pipeline currently normalizes RSS/Atom, Finnhub, Adanos, GDELT,
+CryptoCompare, Alpha Vantage, and FRED responses into the existing
+`news_articles` store. It deduplicates URLs, extracts known symbols, classifies
+sentiment/event type, and feeds chart markers and Agent context. Macro releases
+fall back to `SPY/QQQ`; crypto-wide stories fall back to `BTCUSD/ETHUSD`.
+Adanos uses its documented Reddit, X, News, and Polymarket stock comparison
+endpoints, then maps buzz score, bullish percentage, trend, and activity into
+the platform's normalized sentiment events. Widget/reference entries remain
+catalog metadata and are not fetched as articles.
+
+Automatic monitoring refreshes only enabled sources whose individual polling
+interval has elapsed. Manual refresh uses `force=true`. Administrators can
+create, edit, enable, disable, refresh, inspect, export, and bulk-update sources
+from the resource management page.
+
+The unified data-source control plane is available at `/data-sources`. It maps
+the existing content feeds and the built-in market/index adapters into managed
+profiles, then routes requests by market and capability. Each fallback route
+has an ordered primary/secondary chain; news routes use aggregate mode.
+Configuration changes validate every affected source before an atomic publish,
+retain revision history, and can be rolled back. Runtime failures update a
+persistent circuit-breaker state: three consecutive failures mark a source
+offline and three successful probes restore it. Market-tool responses expose
+the actual source, health state, cache state, and fallback reason.
+
+```text
+GET   /api/information-sources
+POST  /api/information-sources
+GET   /api/information-sources/summary
+GET   /api/information-sources/health
+PATCH /api/information-sources/{source_id}
+POST  /api/information-sources/{source_id}/refresh
+POST  /api/information-sources/refresh?force=true
+GET   /api/data-sources
+POST  /api/data-sources/{source_id}/test
+GET   /api/data-source-routes
+PUT   /api/data-source-routes/{market}/{capability}
+GET   /api/data-source-config/revisions
+```
+
+Provider behavior and limits must be reviewed before enabling production
+feeds. See the [OpenStock integration inventory](https://github.com/Open-Dev-Society/OpenStock#-data--integrations),
+[Finnhub authentication and rate limits](https://api.finnhub.io/docs/api/rate-limit),
+[SEC EDGAR RSS documentation](https://www.sec.gov/about/rss-feeds), and
+[GDELT DOC API documentation](https://blog.gdeltproject.org/gdelt-doc-2-0-api-debuts/).
+
+### Finnhub Market Provider
+
+Finnhub is available as a selectable server-side market provider alongside the
+Binance and Coinbase adapters. The browser calls only the FastAPI
+endpoints; `FINNHUB_API_KEY` is appended to upstream quote and candle requests
+inside the backend and is never returned to the frontend. The initial supported
+universe is `AAPL`, `NVDA`, `TSLA`, `MSFT`, `SPY`, and `QQQ`. Quotes are
+normalized into Watchlist snapshots, while candles feed the same MA/RSI,
+indicator, and backtest contracts used by the other providers.
+
+```text
+FINNHUB_API_KEY=...
+FINNHUB_BASE_URL=https://finnhub.io/api/v1
+TRADING_ECONOMICS_API_KEY=...
+ADANOS_API_KEY=...
+ADANOS_API_BASE_URL=https://api.adanos.org
+```
+
+When a Finnhub key is absent, the provider remains visible as degraded and
+cannot serve live requests. The API returns an explicit upstream error unless
+a still-valid cache or another configured real provider route can serve the request.
+
+### Native Market Tools
+
+`/market-tools` uses an OpenStock-inspired four-panel information architecture:
+market index trends, a volume-weighted stock heatmap, quote rankings, and top
+stories. The implementation is independent and uses the platform's FastAPI
+contracts (`/api/chart/query`, `/api/screener`, `/api/market-breadth`, and
+`/api/market-news`) instead of browser-side TradingView requests. Heatmap tiles
+are rendered with the locally vendored BSD-licensed `d3-hierarchy` package;
+selecting a tile or quote opens the native market workspace, and selecting a
+story opens the existing news detail drawer.
+
+### Encrypted Credential Management
+
+Administrators can manage API keys from `/credentials`, from an information
+source edit form, or from the Agent model-provider editor. Credentials are
+encrypted with Fernet before they are written to SQLite. API responses expose
+only configuration state, origin, a masked hint, version, bound resources, and
+connection-test status; plaintext and ciphertext are never returned.
+
+Configure the master key once before using page-based secret writes:
+
+```bash
+python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+```
+
+Store the result in the deployment environment:
+
+```text
+APP_CREDENTIAL_MASTER_KEY=...
+APP_CREDENTIAL_ASYNC_TESTS=true
+```
+
+The runtime resolution order is encrypted SQLite override first, then the
+resource's existing environment-variable alias. Removing a page override
+restores environment fallback. Existing environment-only deployments remain
+compatible and are not automatically copied into SQLite.
+
+Finnhub market data and Finnhub news share the same `FINNHUB_API_KEY`
+credential binding. Rotating that credential invalidates the Finnhub quote
+cache and affects both resources on their next outbound request. Information
+sources, Agent providers, and future providers use the same binding mechanism.
+Saving a key takes effect immediately; connection checks run afterward and do
+not roll back the new value if an upstream service is unavailable.
+
+```text
+GET    /api/credentials
+POST   /api/credentials
+PATCH  /api/credentials/{credential_id}
+PUT    /api/credentials/{credential_id}/secret
+DELETE /api/credentials/{credential_id}/secret
+POST   /api/credentials/{credential_id}/test
+PUT    /api/market-providers/{provider_id}/credential
+```
 
 ## Product Design
 
@@ -76,6 +481,33 @@ Target design below:
 5. **Quant workstation expansion**
    - Maintain simulated portfolios, watchlists, alerts, factor dashboards, market breadth, sector heatmaps, and research notebooks.
 
+#### Unified Scheduling
+
+The scheduling center provides one operational view over the platform's existing
+schedulers without duplicating their configuration:
+
+- `automation:market-monitor` maps to the platform automation loop that refreshes
+  due information sources and evaluates alerts.
+- `news_source:{id}` maps to each ingestible source's enabled state and polling
+  interval. A source is shown as blocked when the platform automation loop is
+  disabled.
+- `agent:{id}` maps to each Agent's independent schedule, interval,
+  `last_run_at`, and `next_run_at`. A schedule is shown as blocked when its Agent
+  instance is disabled.
+
+Administrators can edit intervals, enable or pause schedules, run a task
+immediately, and apply bulk status changes. Viewer accounts receive the same
+read-only operational view. Mutations use the existing CSRF and administrator
+middleware and are recorded in the administrator audit log.
+
+```text
+GET   /api/schedules
+GET   /api/schedules/{task_id}
+PATCH /api/schedules/{task_id}
+POST  /api/schedules/{task_id}/run
+POST  /api/schedules/bulk-status
+```
+
 ### Navigation
 
 The first screen should remain the actual trading workstation, not a marketing page.
@@ -87,6 +519,52 @@ The first screen should remain the actual trading workstation, not a marketing p
 
 ## System Architecture
 
+### Current Project Layout
+
+The application is a modular FastAPI monolith organized first by business
+capability, with transport and browser delivery kept at the outer boundary:
+
+```text
+app/
+├── main.py                  # Minimal Uvicorn/ASGI entry point
+├── bootstrap/               # Explicit router composition and process lifecycle
+├── api/
+│   └── routes/              # Thin HTTP/WebSocket transport adapters
+├── core/                    # Application factory and environment configuration
+├── db/                      # SQLite connection infrastructure
+├── modules/                 # Business capabilities and public service APIs
+│   ├── ai/                  # Agents and model gateway
+│   ├── calendar/            # Economic and earnings calendars
+│   ├── integrations/        # External data-source control plane
+│   ├── market/              # Instruments, charts, watchlists, and indicators
+│   ├── news/                # Sources, ingestion, tagging, and impact graph
+│   ├── operations/          # Schedules, health, and background execution
+│   ├── platform/            # Auth, settings, credentials, and audit
+│   ├── research/            # Factors, experiments, strategies, and backtests
+│   └── trading/             # Alerts, portfolio, and paper trading
+├── schemas/                 # Pydantic transport and domain contracts
+├── services/
+│   └── runtime.py           # Static legacy import compatibility facade
+└── web/
+    ├── pages/               # FastAPI-served HTML pages
+    ├── router.py            # Browser page routes
+    └── static/              # Core, workspace, admin, styles, and vendor assets
+```
+
+Dependencies point inward: route modules use schemas and domain services;
+domain modules may call another domain's public service but never import API
+routers; schemas do not depend on HTTP handlers. Router registration is explicit
+in `app/bootstrap/application.py`, and the exact 316-route surface is protected
+by `tests/contracts/routes.json`.
+
+New endpoints belong in the matching `app/api/routes` module, new Pydantic models
+belong in the matching `app/schemas` module, and environment/path configuration
+belongs in `app/core/config.py`. New domain logic belongs in the owning
+`app/modules` capability rather than `services/runtime.py`; that module contains
+only explicit legacy re-exports for existing scripts and tests. The browser
+workspace uses native ES Modules and ordered CSS imports, so deployment requires
+no frontend build toolchain.
+
 ### High-level Components
 
 - **FastAPI API server**
@@ -95,7 +573,7 @@ The first screen should remain the actual trading workstation, not a marketing p
 
 - **Provider adapter layer**
   - Wraps third-party market and news providers behind stable internal interfaces.
-  - Allows switching between mock, REST polling, WebSocket streaming, and batch historical ingestion.
+  - Allows switching between REST polling, WebSocket streaming, and batch historical ingestion.
 
 - **Market data service**
   - Handles symbols, snapshots, candles, trades, quotes, order book, and technical indicator calculations.
@@ -128,10 +606,6 @@ The first screen should remain the actual trading workstation, not a marketing p
 ## Market Data Source Design
 
 ### Supported Access Modes
-
-- **Mock mode**
-  - Current default for development and UI prototyping.
-  - Deterministic generated candles and snapshots.
 
 - **REST polling**
   - Suitable for snapshots, historical candles, reference data, and lower-frequency watchlists.
@@ -295,12 +769,24 @@ OrderBookLevel
 NewsSource
 - id
 - name
-- type: rss | api | vendor | social | manual
+- type: rss | rest_api | websocket | widget | reference
+- category: market | news | filing | macro | sentiment | social | alternative
+- adapter
+- provider
 - url
 - enabled
+- symbols
 - poll_interval_seconds
-- credibility_score
+- priority
+- reliability_weight
+- auth_type
+- api_key_env
+- capabilities
+- config
+- region
 - language
+- last_fetched_at
+- last_error
 
 NewsArticle
 - id
@@ -489,7 +975,7 @@ AI outputs must avoid pretending to know private or unavailable information. The
 
 - Triggered by WebSocket market events, new high-impact news, user request, scheduled briefing, or backtest completion.
 - Uses retrieval over local market/news/factor data before generating output.
-- Stores prompts, source IDs, model name, response, latency, and token usage for audit.
+- Stores selected route/channel/model, status, latency, token usage, and redacted errors; prompt and response bodies are not persisted.
 - Supports user feedback: useful, not useful, wrong symbol, wrong sentiment, hide similar.
 
 ### Agent Management Center
@@ -510,13 +996,17 @@ Administrators can clone templates into custom Agent instances and configure:
 - watchlist, full-universe, or explicit symbol scope.
 - independent interval scheduling and event triggers.
 - template-specific thresholds stored as validated JSON.
-- system/task prompts, model provider, notification channel IDs, and rule fallback.
+- system/task prompts, logical model, notification channel IDs, and rule fallback.
 
-Viewers can inspect all configuration, runs, model status, and proposals but cannot mutate or execute resources.
+Viewers can inspect Agent configuration, runs, and proposals but cannot mutate or execute resources. Model channels, credentials, health tests, invocation logs, and the test chat are administrator-only.
 
-#### Model Providers and Secrets
+#### Model Channels, Routes, and Secrets
 
-Model providers use the OpenAI-compatible `POST {base_url}/chat/completions` contract. Provider records store only the base URL, model, limits, and the name of an environment variable. API keys are never stored in SQLite, returned by the API, or included in run/audit output.
+The model gateway separates upstream channels from logical models. An Agent binds to a logical model; its enabled targets select an upstream channel/model by priority, weight, and current health. Network, rate-limit, authentication, and server failures can fail over before output begins. Three consecutive failures open the channel circuit for five minutes.
+
+Built-in presets cover OpenAI, Azure OpenAI, Anthropic, Gemini, DeepSeek, DashScope/Qwen, Zhipu GLM, VolcEngine/Doubao, Moonshot/Kimi, SiliconFlow, OpenRouter, xAI, Mistral, Ollama, vLLM, and generic OpenAI-compatible endpoints. Model names can be synchronized from supporting upstreams or entered manually.
+
+API keys use the shared encrypted credential vault and environment fallback. Secrets are never returned by APIs or included in model invocation/audit output. Invocation logs retain only route, channel, model, source, status, latency, token counts, and a redacted error.
 
 For the default Compose setup, export the key before starting the service:
 
@@ -525,7 +1015,7 @@ export OPENAI_API_KEY="..."
 docker compose up -d --build
 ```
 
-In `/agents`, create a provider whose key environment variable is `OPENAI_API_KEY`. Other gateways can use any uppercase environment variable passed into the container. If a model call fails and fallback is enabled, the run succeeds with a rule-based result and records the model error as fallback context.
+Create channels and logical models at `/model-management`, then select the logical model in `/agents`. Use `/model-playground` for multi-turn streaming validation. If all route targets fail and Agent fallback is enabled, the run succeeds with its rule-based result and records the model failure as fallback context.
 
 #### Scheduling, Runs, and Approval
 
@@ -539,8 +1029,12 @@ Primary APIs:
 - `POST /api/agents/{agent_id}/clone`
 - `POST /api/agents/{agent_id}/run` and `/test`
 - `GET /api/agents/{agent_id}/runs` and `GET /api/agents/runs`
-- `GET/POST/PATCH /api/agent-providers`
-- `POST /api/agent-providers/{provider_id}/test`
+- `GET/POST/PATCH/DELETE /api/model-channels`
+- `POST /api/model-channels/{channel_id}/test` and `/sync-models`
+- `GET/POST/PATCH/DELETE /api/model-routes`
+- `GET /api/model-invocations`
+- `POST /api/model-playground/chat` (SSE)
+- Legacy `/api/agent-providers` endpoints remain available for compatibility.
 - `GET /api/agent-proposals`
 - `POST /api/agent-proposals/{proposal_id}/approve` or `/reject`
 
@@ -708,7 +1202,9 @@ The API should remain simple REST for user actions and use WebSocket for live st
 ### News APIs
 
 - `GET /api/news`
-  - Filter by symbol, source, sentiment, event type, impact score, and time range.
+  - Return the persisted all-market news feed with optional repeated
+    `source_id`, `symbol`, `limit`, and `offset` parameters. The response also
+    includes source facets for the active market/symbol scope.
 
 - `GET /api/news/{id}`
   - Return article details, AI summary, source metadata, and related events.
@@ -719,10 +1215,10 @@ The API should remain simple REST for user actions and use WebSocket for live st
 - `GET /api/news-events/{id}`
   - Return local news detail for a chart or timeline event, including summary, key points, related symbols, and original URL.
 
-- `POST /api/news/sources`
-  - Add RSS/API/manual source configuration.
+- `GET /api/information-sources`, `POST /api/information-sources`
+  - List or add RSS/API/widget/reference source configuration.
 
-- `PATCH /api/news/sources/{id}`
+- `PATCH /api/information-sources/{id}`
   - Enable, disable, or update polling settings.
 
 ### AI APIs
@@ -1138,10 +1634,10 @@ Recommended future modules:
 ### Phase 1: Data and News Foundation
 
 - Introduce provider adapter interfaces.
-- Keep mock provider as default.
+- Use Coinbase as the credential-free default provider and Finnhub for U.S. equities.
 - Add canonical market and news models.
 - Add RSS ingestion and manual source configuration.
-- Add chart event API and render mock news markers on the K-line chart.
+- Add chart event API and render persisted source-backed news markers on the K-line chart.
 
 ### Phase 2: AI Agent Workspace
 
@@ -1190,6 +1686,20 @@ Recommended future modules:
 - Coinbase Advanced Trade WebSocket: https://docs.cdp.coinbase.com/coinbase-app/advanced-trade-apis/websocket/websocket-overview
 - NewsAPI Everything endpoint: https://newsapi.org/docs/endpoints/everything
 - RSS 2.0 specification: https://www.rssboard.org/rss-specification
+
+## Paper Trading
+
+The market workspace includes a user-isolated paper-trading terminal rather than editable position cards.
+
+- USD, CNY, and USDT subaccounts are created automatically with independent cash balances.
+- The order ticket supports market, limit, stop, and stop-limit orders, DAY/GTC duration, long/short books, and optional OCO take-profit/stop-loss brackets.
+- Market orders use the latest non-stale quote with 1 bp adverse slippage. Pending orders are checked every 60 seconds against candles created after submission; the schedule can be managed from the unified task center.
+- Fills, cash movements, fees, realized P&L, and open positions are persisted as separate auditable records. Position cost uses moving weighted average; full and partial closes are supported.
+- The chart displays average-cost, TP/SL, and pending-order lines plus explicit blue/red paper-fill arrows. News remains on its own event track.
+- The first release assumes full fills because the configured feeds do not provide a reliable order book. Shorts reserve 100% collateral; leverage, funding rates, liquidation, and perpetual-contract trading are intentionally unavailable.
+- Legacy `portfolio_positions` records are migrated once to synthetic opening fills owned by the earliest administrator. Legacy portfolio APIs remain available for compatibility but the workspace uses `/api/paper/*`.
+
+Paper trading is an approximation for research and interface testing. It is not broker execution and must not be presented as actual transaction evidence.
 
 ## Run
 

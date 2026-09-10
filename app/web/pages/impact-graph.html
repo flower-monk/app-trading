@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>App Trading · 影响关系图</title>
+    <script src="/static/core/i18n.js"></script><script src="/static/core/theme.js"></script>
+    <link rel="stylesheet" href="/static/styles/styles.css" /><link rel="stylesheet" href="/static/styles/admin.css" />
+    <link rel="stylesheet" href="/static/styles/apple-polish.css?v=20260907.1" /><link rel="stylesheet" href="/static/styles/theme.css?v=20260907.1" />
+    <link rel="stylesheet" href="/static/styles/admin-center.css?v=20260907.1" /><link rel="stylesheet" href="/static/styles/impact-graph.css" />
+  </head>
+  <body class="admin-page" data-admin-section="impact-graph">
+    <div class="admin-shell"><aside class="admin-sidebar"></aside><main class="admin-main">
+      <header class="admin-topbar"><div><p class="eyebrow">News Intelligence</p><h1>影响关系图</h1></div><div class="admin-account"><span data-admin-user></span><button class="icon-button language-toggle" type="button" data-language-toggle>EN</button><button class="icon-button" type="button" data-admin-theme title="切换主题"><i data-lucide="sun"></i></button><button class="icon-button" type="button" data-admin-logout title="退出"><i data-lucide="log-out"></i></button></div></header>
+      <div class="admin-page-body impact-graph-page">
+        <header class="impact-page-header">
+          <div><h2>新闻影响传导网络</h2><p>管理事件、宏观因子与市场资产之间的可审计关系。</p></div>
+          <div class="impact-header-actions"><button id="refreshImpactGraph" class="icon-button" type="button" title="刷新"><i data-lucide="refresh-cw"></i></button><button id="backfillImpactGraph" class="text-button" type="button"><i data-lucide="history"></i>回填近 30 天</button><button id="openImpactEdgeForm" class="primary-button" type="button"><i data-lucide="plus"></i>新增关系</button></div>
+        </header>
+        <div id="impactGraphNotice" class="resource-notice" role="status"></div>
+        <nav class="impact-tabs" aria-label="影响关系工作区">
+          <button class="impact-tab is-active" type="button" data-impact-tab="graph"><i data-lucide="network"></i>关系图谱<span id="impactGraphBadge">0</span></button>
+          <button class="impact-tab" type="button" data-impact-tab="approval"><i data-lucide="list-checks"></i>待审批<span id="impactPendingCount">0</span></button>
+          <button class="impact-tab" type="button" data-impact-tab="diagnostics"><i data-lucide="circle-alert"></i>失败诊断<span id="impactFailedCount">0</span></button>
+        </nav>
+
+        <section class="impact-workspace is-active" data-impact-panel="graph">
+          <div class="impact-commandbar">
+            <label class="impact-search"><i data-lucide="search"></i><input id="impactGraphSearch" type="search" placeholder="搜索节点或关系" /></label>
+            <select id="impactGraphStatus" aria-label="关系状态"><option value="active">生效与待审批</option><option value="approved">仅已审批</option><option value="pending">仅待审批</option></select>
+            <select id="impactDirectionFilter" aria-label="影响方向"><option value="all">全部方向</option><option value="positive">正面</option><option value="negative">负面</option><option value="neutral">中性</option><option value="mixed">混合</option><option value="uncertain">不确定</option></select>
+            <select id="impactNodeTypeFilter" aria-label="节点类型"><option value="all">全部节点</option></select>
+            <div id="impactFocusTrail" class="impact-focus-trail" hidden><span></span><button type="button" title="退出聚焦"><i data-lucide="x"></i></button></div>
+            <div class="impact-view-tools">
+              <button id="impactZoomOut" class="icon-button" type="button" title="缩小"><i data-lucide="zoom-out"></i></button>
+              <button id="impactZoomIn" class="icon-button" type="button" title="放大"><i data-lucide="zoom-in"></i></button>
+              <button id="impactFit" class="icon-button" type="button" title="适应画布"><i data-lucide="scan"></i></button>
+              <button id="impactRelayout" class="icon-button" type="button" title="重新布局"><i data-lucide="git-branch"></i></button>
+              <button id="impactFullscreen" class="icon-button" type="button" title="全屏"><i data-lucide="maximize-2"></i></button>
+            </div>
+          </div>
+          <div class="impact-summary" aria-label="图谱摘要"><span><b id="impactApprovedCount">0</b> 已审批</span><span><b id="impactNodeCount">0</b> 节点</span><span><b id="impactEdgeCount">0</b> 当前关系</span></div>
+          <div id="impactGraphExplorer" class="impact-explorer">
+            <aside class="impact-facets"><div class="impact-aside-heading"><strong>节点类型</strong></div><div id="impactNodeLegend" class="impact-node-legend"></div><div class="impact-direction-legend"><strong>影响方向</strong><span class="positive">正面影响</span><span class="negative">负面影响</span><span class="uncertain">混合 / 不确定</span><span class="pending">待审批关系</span></div></aside>
+            <div class="impact-network-stage"><div id="impactNetwork" aria-label="影响关系网络图"></div><div id="impactNetworkEmpty" class="impact-network-empty" hidden><i data-lucide="git-fork"></i><strong>暂无可展示的影响关系</strong><span>可新增关系或运行新闻回填任务。</span></div><div id="impactGraphLoading" class="impact-network-loading" hidden><span></span>正在构建图谱</div></div>
+            <aside id="impactNetworkDetail" class="impact-network-detail"><div class="impact-detail-empty"><i data-lucide="mouse-pointer-2"></i><strong>关系检查器</strong><p>选择节点或关系后查看证据、权重与审批记录。</p></div></aside>
+          </div>
+        </section>
+
+        <section class="impact-workspace" data-impact-panel="approval" hidden>
+          <header class="impact-section-header"><div><h2>待审批关系</h2><p>Agent 建议和人工新增关系在通过后进入生产图谱。</p></div></header>
+          <div id="impactProposalList" class="impact-proposal-list"></div>
+          <div id="impactApprovalEmpty" class="impact-section-empty" hidden><i data-lucide="badge-check"></i><strong>没有待审批关系</strong><span>新的 Agent 候选关系会出现在这里。</span></div>
+        </section>
+
+        <section class="impact-workspace" data-impact-panel="diagnostics" hidden>
+          <header class="impact-section-header"><div><h2>失败诊断</h2><p>查看未进入审批阶段的候选关系及结构校验原因。</p></div></header>
+          <div class="impact-diagnostic-toolbar"><label class="impact-search"><i data-lucide="search"></i><input id="impactDiagnosticSearch" type="search" placeholder="搜索候选关系" /></label><select id="impactDiagnosticReason" aria-label="失败原因"><option value="">全部原因</option></select></div>
+          <div id="impactDiagnosticFacets" class="impact-diagnostic-facets"></div>
+          <div id="impactDiagnosticList" class="impact-diagnostic-list"></div>
+          <div id="impactDiagnosticEmpty" class="impact-section-empty" hidden><i data-lucide="circle-check-big"></i><strong>没有失败记录</strong><span>当前筛选条件下未发现结构校验问题。</span></div>
+          <footer class="impact-pagination"><span id="impactDiagnosticRange"></span><div><button id="impactDiagnosticPrev" class="icon-button" type="button" title="上一页"><i data-lucide="chevron-left"></i></button><button id="impactDiagnosticNext" class="icon-button" type="button" title="下一页"><i data-lucide="chevron-right"></i></button></div></footer>
+        </section>
+      </div>
+    </main></div>
+    <dialog id="impactEdgeDialog"><form id="impactEdgeForm" method="dialog"><header><div><h2>新增影响关系</h2><p>关系将先进入审批，不会立即影响新闻标注。</p></div><button class="icon-button" value="cancel" type="submit" title="关闭"><i data-lucide="x"></i></button></header><div class="impact-edge-fields">
+      <label>来源类型<select name="source_type"><option value="topic">主题</option><option value="macro_factor">宏观因子</option><option value="country">国家</option><option value="region">地区</option></select></label><label>来源代码<input name="source_id" required placeholder="data_center_expansion" /></label><label>来源名称<input name="source_label" required placeholder="数据中心扩张" /></label>
+      <label>目标类型<select name="target_type"><option value="instrument">标的</option><option value="index">指数</option><option value="etf">ETF</option><option value="sector">行业</option><option value="commodity">商品</option><option value="currency">货币</option><option value="market">市场</option></select></label><label>目标代码<input name="target_id" required placeholder="NVDA" /></label><label>目标名称<input name="target_label" required placeholder="NVIDIA" /></label>
+      <label>传导关系<input name="relation" required placeholder="AI 算力需求" /></label><label>影响方向<select name="direction"><option value="positive">正面</option><option value="negative">负面</option><option value="mixed">混合</option><option value="uncertain">不确定</option></select></label><label>关系权重<input name="weight" type="number" min="0" max="1" step="0.05" value="0.8" required /></label>
+      <label class="wide">证据说明<textarea name="evidence" required></textarea></label><label class="wide">数据来源<textarea name="provenance" required placeholder="研究报告、公告或数据源链接"></textarea></label>
+    </div><footer><button value="cancel" type="submit">取消</button><button class="primary-button" value="default" type="submit">提交审批</button></footer></form></dialog>
+    <script src="/static/vendor/lucide.min.js"></script><script src="/static/vendor/dagre.min.js"></script><script src="/static/vendor/cytoscape.min.js"></script><script src="/static/vendor/cytoscape-dagre.js"></script><script src="/static/core/admin-center.js"></script><script src="/static/admin/impact-graph.js"></script>
+  </body>
+</html>

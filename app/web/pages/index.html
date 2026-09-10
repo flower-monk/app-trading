@@ -1,0 +1,1019 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>盯盘指标工作台</title>
+    <script src="/static/core/i18n.js?v=20260909.1"></script>
+    <script src="/static/core/theme.js?v=20260721.3"></script>
+    <link rel="stylesheet" href="/static/styles/styles.css?v=20260909.1" />
+    <link rel="stylesheet" href="/static/styles/admin.css" />
+    <link rel="stylesheet" href="/static/styles/apple-polish.css?v=20260909.1" />
+    <link rel="stylesheet" href="/static/styles/theme.css?v=20260907.1" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">AT</div>
+          <div>
+            <strong>App Trading</strong>
+            <span>指标盯盘</span>
+          </div>
+        </div>
+        <nav class="nav-list" aria-label="主导航">
+          <div class="nav-group">
+            <span class="nav-group-label">工作台</span>
+            <a class="nav-item" href="/dashboard" title="Dashboard" data-view="dashboard"><i data-lucide="layout-dashboard"></i>Dashboard</a>
+            <a class="nav-item" href="/market" title="行情" data-view="market"><i data-lucide="chart-candlestick"></i>行情</a>
+            <a class="nav-item" href="/market-tools" title="市场工具" data-view="market-tools"><i data-lucide="panels-top-left"></i>市场工具</a>
+            <a class="nav-item" href="/watchlist" title="Watchlist" data-view="watchlist"><i data-lucide="list"></i>Watchlist</a>
+          </div>
+          <div class="nav-group">
+            <span class="nav-group-label">智能分析</span>
+            <a class="nav-item" href="/news" title="新闻" data-view="news"><i data-lucide="newspaper"></i>新闻</a>
+            <a class="nav-item" href="/ai" title="AI盯盘" data-view="ai"><i data-lucide="bot"></i>AI盯盘</a>
+            <a class="nav-item" href="/factors" title="因子" data-view="factors"><i data-lucide="flask-conical"></i>因子</a>
+            <a class="nav-item" href="/backtest" title="回测" data-view="backtest"><i data-lucide="chart-no-axes-combined"></i>回测</a>
+          </div>
+          <div class="nav-group">
+            <span class="nav-group-label">风险执行</span>
+            <a class="nav-item" href="/alerts" title="预警" data-view="alerts"><i data-lucide="bell"></i>预警</a>
+          </div>
+          <div class="nav-group">
+            <span class="nav-group-label">管理</span>
+            <a class="nav-item nav-link admin-write" href="/admin" title="管理中心"><i data-lucide="settings"></i>管理中心</a>
+          </div>
+        </nav>
+        <section class="mini-panel">
+          <div class="section-title">市场宽度</div>
+          <div class="breadth">
+            <span style="--value:72%">上涨 72%</span>
+            <span style="--value:18%">震荡 18%</span>
+            <span style="--value:10%">下跌 10%</span>
+          </div>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Real-time Indicator Desk</p>
+            <h1 id="viewTitle">行情</h1>
+            <div class="provider-bar">
+              <div id="providerStatus" class="provider-status">行情源加载中</div>
+              <div id="streamStatus" class="provider-status">实时流未连接</div>
+              <select id="providerSelect" class="provider-select" aria-label="行情源"></select>
+            </div>
+          </div>
+          <div class="search-wrap">
+            <input id="searchInput" type="search" placeholder="搜索股票、ETF、加密货币" autocomplete="off" />
+            <button id="refreshButton" class="icon-button" type="button" title="刷新">↻</button>
+            <button class="icon-button language-toggle" type="button" data-language-toggle title="Switch to English" aria-label="Switch to English">EN</button>
+            <button id="themeToggle" class="icon-button theme-toggle" type="button" data-theme-toggle title="切换主题"><i data-lucide="sun"></i></button>
+            <span id="currentUserLabel" class="current-user"></span>
+            <button id="logoutButton" class="icon-button" type="button" title="退出登录">⇥</button>
+          </div>
+        </header>
+
+        <section id="dashboardView" class="dashboard-view" data-module="dashboard">
+          <div class="page-intro">
+            <div>
+              <h2>系统运营总览</h2>
+              <p id="dashboardGeneratedAt">正在汇总平台状态</p>
+            </div>
+            <div class="page-actions">
+              <button id="dashboardRefreshNews" class="text-button admin-write" type="button"><i data-lucide="rss"></i>刷新新闻</button>
+              <button id="dashboardRunAutomation" class="primary-button admin-write" type="button"><i data-lucide="play"></i>运行盯盘</button>
+              <button id="refreshDashboard" class="icon-button" type="button" title="刷新总览"><i data-lucide="refresh-cw"></i></button>
+            </div>
+          </div>
+          <div id="dashboardMetrics" class="dashboard-metrics" aria-label="平台状态指标"></div>
+          <div class="dashboard-grid">
+            <section class="dashboard-panel wide">
+              <div class="panel-header compact"><h2>服务健康</h2><a class="text-button" href="/admin">管理中心</a></div>
+              <div class="table-wrap"><table class="dashboard-table"><thead><tr><th>组件</th><th>状态</th><th>详情</th><th>数量</th></tr></thead><tbody id="dashboardHealthBody"></tbody></table></div>
+            </section>
+            <section class="dashboard-panel narrow">
+              <div class="panel-header compact"><h2>近期事件</h2><a class="text-button" href="/alerts">查看预警</a></div>
+              <div id="dashboardEvents" class="dashboard-event-list"></div>
+            </section>
+            <section class="dashboard-panel">
+              <div class="panel-header compact"><h2>Agent 运行</h2><a class="text-button" href="/admin/agents">管理 Agent</a></div>
+              <div class="table-wrap"><table class="dashboard-table"><thead><tr><th>Agent</th><th>触发</th><th>状态</th><th>耗时</th></tr></thead><tbody id="dashboardAgentRunsBody"></tbody></table></div>
+            </section>
+            <section class="dashboard-panel">
+              <div class="panel-header compact"><h2>自动化运行</h2><a class="text-button" href="/alerts">自动化设置</a></div>
+              <div class="table-wrap"><table class="dashboard-table"><thead><tr><th>完成时间</th><th>状态</th><th>新增新闻</th><th>预警</th></tr></thead><tbody id="dashboardAutomationRunsBody"></tbody></table></div>
+            </section>
+            <section class="dashboard-panel wide">
+              <div class="panel-header compact"><h2>Watchlist 摘要</h2><a class="text-button" href="/watchlist">打开完整列表</a></div>
+              <div class="table-wrap"><table class="dashboard-table"><thead><tr><th>标的</th><th>市场</th><th>价格</th><th>涨跌幅</th><th>信号</th></tr></thead><tbody id="dashboardWatchlistBody"></tbody></table></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="watchlistResourceView" class="watchlist-resource-view" data-module="watchlist">
+          <div class="page-intro">
+            <div><h2>Watchlist</h2><p id="watchlistResourceSummary">按分组管理关注标的、标签和备注</p></div>
+            <div class="page-actions">
+              <button id="manageWatchlistGroups" class="text-button admin-write" type="button"><i data-lucide="folder-cog"></i>管理分组</button>
+              <button id="newWatchlistItem" class="primary-button admin-write" type="button"><i data-lucide="plus"></i>添加标的</button>
+            </div>
+          </div>
+          <div class="resource-toolbar">
+            <input id="watchlistResourceSearch" type="search" placeholder="搜索代码、名称、标签或备注" autocomplete="off" />
+            <select id="watchlistGroupFilter" aria-label="按分组筛选"><option value="">全部分组</option></select>
+            <select id="watchlistMarketFilter" aria-label="按市场筛选"><option value="">全部市场</option></select>
+            <select id="watchlistSignalFilter" aria-label="按信号筛选"><option value="">全部信号</option><option value="strong_buy">强买入</option><option value="buy">买入</option><option value="neutral">中性</option><option value="sell">卖出</option><option value="strong_sell">强卖出</option></select>
+            <button id="refreshWatchlistResource" class="icon-button" type="button" title="刷新 Watchlist"><i data-lucide="refresh-cw"></i></button>
+          </div>
+          <div class="resource-tabs" role="tablist" aria-label="Watchlist 状态">
+            <button class="resource-tab active" type="button" data-watchlist-status="active">活动标的</button>
+            <button class="resource-tab" type="button" data-watchlist-status="disabled">已停用</button>
+          </div>
+          <div id="watchlistBulkBar" class="bulk-bar" hidden>
+            <span id="watchlistSelectedCount">已选择 0 项</span>
+            <select id="watchlistBulkGroup" aria-label="目标分组"></select>
+            <button id="watchlistBulkMove" class="text-button admin-write" type="button">移动分组</button>
+            <button id="watchlistBulkStatus" class="text-button admin-write" type="button">停用</button>
+          </div>
+          <div class="watchlist-resource-table">
+            <table>
+              <thead><tr>
+                <th><input id="watchlistSelectAll" type="checkbox" aria-label="选择当前页" /></th>
+                <th><button type="button" data-watchlist-sort="symbol">标的</button></th>
+                <th>市场</th><th>分组 / 标签</th>
+                <th><button type="button" data-watchlist-sort="price">价格</button></th>
+                <th><button type="button" data-watchlist-sort="change">涨跌幅</button></th>
+                <th><button type="button" data-watchlist-sort="rsi">RSI</button></th>
+                <th><button type="button" data-watchlist-sort="macd">MACD</button></th>
+                <th><button type="button" data-watchlist-sort="signal">信号</button></th>
+                <th>操作</th>
+              </tr></thead>
+              <tbody id="watchlistResourceBody"></tbody>
+            </table>
+            <div class="watchlist-pagination"><span id="watchlistPageLabel">1 / 1</span><button id="watchlistPreviousPage" class="icon-button" type="button" title="上一页">←</button><button id="watchlistNextPage" class="icon-button" type="button" title="下一页">→</button></div>
+          </div>
+        </section>
+
+        <section id="marketToolsView" class="market-tools-view" data-module="market-tools">
+          <div class="page-intro">
+            <div>
+              <h2>市场工具</h2>
+              <p>指数趋势、市场热力、行情排行与热点新闻</p>
+            </div>
+            <div class="market-tools-actions"><span id="marketToolsGeneratedAt">正在加载</span><button id="marketToolsRefresh" class="icon-button" type="button" title="刷新市场工具"><i data-lucide="refresh-cw"></i></button></div>
+          </div>
+          <div class="market-tools-grid">
+            <section class="market-tool-panel financial-calendar-panel">
+              <div class="market-tool-heading financial-calendar-heading">
+                <div><p class="eyebrow">Financial Calendar</p><h2>财经事件日历</h2></div>
+                <div class="market-tools-actions"><span id="financialCalendarStatus">正在加载</span><button id="financialCalendarRefresh" class="icon-button" type="button" title="刷新财经日历"><i data-lucide="refresh-cw"></i></button></div>
+              </div>
+              <div class="financial-calendar-toolbar">
+                <div id="financialCalendarKinds" class="segmented-control" role="tablist" aria-label="事件类型"><button class="active" type="button" data-calendar-kind="macro">宏观事件</button><button type="button" data-calendar-kind="earnings">财报日历</button></div>
+                <select id="financialCalendarCountry" aria-label="国家或地区"><option value="">全部国家和地区</option></select>
+                <select id="financialCalendarImportance" aria-label="重要等级"><option value="">全部等级</option><option value="high">高影响</option><option value="medium">中影响</option><option value="low">低影响</option></select>
+                <label class="calendar-search"><i data-lucide="search"></i><input id="financialCalendarSearch" type="search" placeholder="搜索事件或标的" /></label>
+                <label class="check-row inline-check"><input id="financialCalendarWatchlist" type="checkbox" /><span>仅自选</span></label>
+              </div>
+              <div class="financial-calendar-weekbar">
+                <button id="financialCalendarPrevious" class="icon-button" type="button" title="上一周"><i data-lucide="chevron-left"></i></button>
+                <button id="financialCalendarToday" class="text-button" type="button">本周</button>
+                <div id="financialCalendarDays" class="financial-calendar-days" role="tablist" aria-label="日历日期"></div>
+                <button id="financialCalendarNext" class="icon-button" type="button" title="下一周"><i data-lucide="chevron-right"></i></button>
+              </div>
+              <div class="financial-calendar-columns" aria-hidden="true"><span>时间 / 地区</span><span>事件</span><span>实际</span><span>预期</span><span>前值</span><span>影响</span></div>
+              <div id="financialCalendarAgenda" class="financial-calendar-agenda" aria-live="polite"></div>
+            </section>
+            <section class="market-tool-panel market-overview-panel">
+              <div class="market-tool-heading"><div><p class="eyebrow">Market Overview</p><h2>市场概览</h2></div><span id="marketOverviewStatus">--</span></div>
+              <div id="marketOverviewTabs" class="market-tool-tabs" role="tablist" aria-label="市场指数">
+                <button class="active" type="button" data-market-overview-instrument="INDEX:SPX">美股</button>
+                <button type="button" data-market-overview-instrument="INDEX:SHCOMP">A股</button>
+                <button type="button" data-market-overview-instrument="INDEX:HSI">港股</button>
+                <button type="button" data-market-overview-instrument="INDEX:DAX">欧洲</button>
+              </div>
+              <div class="market-overview-quote"><div><strong id="marketOverviewName">标普500</strong><span id="marketOverviewSymbol">SPX</span></div><div><strong id="marketOverviewPrice">--</strong><span id="marketOverviewChange">--</span></div></div>
+              <div id="marketOverviewChart" class="market-overview-chart" aria-label="市场指数趋势图"></div>
+              <div id="marketOverviewRanges" class="market-tool-tabs market-range-tabs" role="tablist" aria-label="指数时间范围">
+                <button type="button" data-market-overview-range="1M">1M</button>
+                <button type="button" data-market-overview-range="3M">3M</button>
+                <button class="active" type="button" data-market-overview-range="1Y">1Y</button>
+                <button type="button" data-market-overview-range="5Y">5Y</button>
+              </div>
+              <div id="marketOverviewGroups" class="market-overview-groups"></div>
+            </section>
+            <section class="market-tool-panel market-heatmap-panel">
+              <div class="market-tool-heading"><div><p class="eyebrow">Stock Heatmap</p><h2>市场热力图</h2></div><span id="marketHeatmapSource">面积代表成交活跃度</span></div>
+              <div id="nativeMarketHeatmap" class="native-market-heatmap" aria-live="polite"></div>
+            </section>
+            <section class="market-tool-panel market-quotes-panel">
+              <div class="market-tool-heading"><div><p class="eyebrow">Market Quotes</p><h2>行情排行</h2></div><span id="marketQuoteSource">平台行情快照</span></div>
+              <div id="marketRankingTabs" class="market-tool-tabs" role="tablist" aria-label="行情排行方式"><button class="active" type="button" data-market-ranking="gainers">涨幅榜</button><button type="button" data-market-ranking="losers">跌幅榜</button><button type="button" data-market-ranking="active">成交活跃</button></div>
+              <div class="market-tool-table-wrap"><table class="market-tool-table"><thead><tr><th>标的</th><th>价格</th><th>涨跌幅</th><th>成交量</th><th>信号</th></tr></thead><tbody id="marketQuoteBody"></tbody></table></div>
+            </section>
+            <section class="market-tool-panel market-news-panel">
+              <div class="market-tool-heading"><div><p class="eyebrow">Top Stories</p><h2>热点新闻</h2></div><span id="marketNewsCount">0 条</span></div>
+              <div id="marketTopStories" class="market-top-stories" aria-live="polite"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="modelCenterView" class="model-center-view" data-module="models">
+          <div class="page-intro model-center-intro">
+            <div>
+              <p class="eyebrow">Model Control Plane</p>
+              <h2>模型运行与接入</h2>
+              <p>统一管理模型渠道、逻辑路由、调用审计与在线测试。</p>
+            </div>
+          </div>
+          <div class="model-center-tabs segmented-control" role="tablist" aria-label="模型中心视图">
+            <button class="active" type="button" role="tab" aria-selected="true" data-model-tab="channels"><i data-lucide="waypoints"></i>模型渠道</button>
+            <button type="button" role="tab" aria-selected="false" data-model-tab="routes"><i data-lucide="route"></i>逻辑模型</button>
+            <button type="button" role="tab" aria-selected="false" data-model-tab="invocations"><i data-lucide="activity"></i>调用记录</button>
+            <button type="button" role="tab" aria-selected="false" data-model-tab="playground"><i data-lucide="message-square"></i>测试聊天</button>
+          </div>
+          <div id="modelNotice" class="model-notice" role="status" aria-live="polite"></div>
+
+          <div id="modelMetrics" class="model-metrics" aria-label="模型运行概览"></div>
+
+          <section class="model-center-panel active" data-model-panel="channels">
+            <div class="model-panel-heading">
+              <div><h2>渠道连接</h2><p>管理上游端点与凭据，并同步可用模型。</p></div>
+              <button id="modelNewChannel" class="primary-button" type="button"><i data-lucide="plus"></i>新增渠道</button>
+            </div>
+            <div class="model-toolbar">
+              <input id="modelChannelSearch" type="search" placeholder="搜索名称、供应商或模型" />
+              <select id="modelChannelProvider" aria-label="按供应商筛选"><option value="">全部供应商</option></select>
+              <select id="modelChannelStatus" aria-label="按健康状态筛选"><option value="">全部状态</option><option value="healthy">健康</option><option value="degraded">降级</option><option value="unavailable">不可用</option><option value="unknown">未检测</option><option value="disabled">已停用</option></select>
+              <span class="model-toolbar-spacer"></span>
+              <button id="modelBatchEnable" class="text-button" type="button">批量启用</button>
+              <button id="modelBatchDisable" class="text-button" type="button">批量停用</button>
+            </div>
+            <div class="model-table-wrap"><table class="model-table"><thead><tr><th><input id="modelSelectAllChannels" type="checkbox" aria-label="选择全部渠道" /></th><th>渠道</th><th>供应商 / 协议</th><th>模型</th><th>健康</th><th>延迟</th><th>密钥</th><th>操作</th></tr></thead><tbody id="modelChannelRows"></tbody></table></div>
+          </section>
+
+          <section class="model-center-panel" data-model-panel="routes">
+            <div class="model-panel-heading">
+              <div><h2>逻辑模型</h2><p>Agent 使用逻辑模型，运行时按优先级、权重与健康状态选择实际渠道。</p></div>
+              <button id="modelNewRoute" class="primary-button" type="button"><i data-lucide="plus"></i>新增逻辑模型</button>
+            </div>
+            <div class="model-toolbar"><input id="modelRouteSearch" type="search" placeholder="搜索名称或别名" /></div>
+            <div class="model-table-wrap"><table class="model-table"><thead><tr><th>逻辑模型</th><th>目标渠道</th><th>默认参数</th><th>状态</th><th>操作</th></tr></thead><tbody id="modelRouteRows"></tbody></table></div>
+          </section>
+
+          <section class="model-center-panel" data-model-panel="invocations">
+            <div class="model-panel-heading">
+              <div><h2>调用记录</h2><p>记录渠道、模型、Token、耗时和脱敏错误，不保存会话正文。</p></div>
+            </div>
+            <div class="model-toolbar"><select id="modelInvocationStatus" aria-label="按调用状态筛选"><option value="">全部状态</option><option value="succeeded">成功</option><option value="failed">失败</option></select></div>
+            <div class="model-table-wrap"><table class="model-table"><thead><tr><th>时间</th><th>来源</th><th>渠道 / 模型</th><th>状态</th><th>Token</th><th>耗时</th><th>错误</th></tr></thead><tbody id="modelInvocationRows"></tbody></table></div>
+          </section>
+
+          <section class="model-center-panel model-playground-panel" data-model-panel="playground">
+            <div class="model-playground-toolbar">
+              <label><span>逻辑模型</span><select id="modelPlaygroundRoute"></select></label>
+              <label><span>渠道锁定</span><select id="modelPlaygroundChannel"><option value="">自动路由</option></select></label>
+              <button id="modelPlaygroundSettingsToggle" class="text-button" type="button"><i data-lucide="sliders-horizontal"></i>请求设置</button>
+            </div>
+            <div class="model-playground-layout">
+              <aside id="modelPlaygroundSettings" class="model-playground-settings">
+                <div class="model-settings-heading"><strong>请求设置</strong><button id="modelClearChat" class="icon-button" type="button" title="清空会话"><i data-lucide="trash-2"></i></button></div>
+                <label><span>系统提示词</span><textarea id="modelSystemPrompt" rows="8" placeholder="定义模型角色和输出要求"></textarea></label>
+                <label><span>温度 <b id="modelTemperatureValue">0.2</b></span><input id="modelTemperature" type="range" min="0" max="2" step="0.1" value="0.2" /></label>
+                <label><span>最大输出 Token</span><input id="modelMaxTokens" type="number" min="16" max="32000" value="1200" /></label>
+                <div class="model-privacy-note"><strong>隐私边界</strong><p>聊天内容只保存在当前浏览器内存。服务端仅记录模型、Token、耗时和脱敏错误。</p></div>
+              </aside>
+              <section class="model-chat-panel">
+                <div id="modelChatMessages" class="model-chat-messages"></div>
+                <div id="modelRunMeta" class="model-run-meta"></div>
+                <form id="modelChatForm" class="model-chat-composer">
+                  <textarea id="modelChatInput" rows="3" maxlength="30000" placeholder="输入测试消息" required></textarea>
+                  <div><span id="modelChatStatus">就绪</span><button id="modelStopChat" class="text-button" type="button" hidden><i data-lucide="square"></i>停止</button><button id="modelSendChat" class="primary-button" type="submit"><i data-lucide="send"></i>发送</button></div>
+                </form>
+              </section>
+            </div>
+          </section>
+
+          <div id="modelChannelModal" class="modal-backdrop" hidden>
+            <form id="modelChannelForm" class="resource-modal model-modal">
+              <div class="panel-header compact"><h2 id="modelChannelModalTitle">新增渠道</h2><button class="icon-button" type="button" data-close-model-channel title="关闭"><i data-lucide="x"></i></button></div>
+              <div class="model-form-grid">
+                <label><span>供应商</span><select id="modelChannelType" required></select></label><label><span>名称</span><input id="modelChannelName" required maxlength="80" /></label>
+                <label><span>协议</span><select id="modelChannelProtocol"><option value="openai_chat">OpenAI Chat</option><option value="openai_responses">OpenAI Responses</option><option value="azure_openai">Azure OpenAI</option><option value="anthropic">Anthropic Messages</option><option value="gemini">Gemini</option></select></label><label><span>超时（秒）</span><input id="modelChannelTimeout" type="number" min="3" max="180" value="30" /></label>
+                <label class="wide"><span>Base URL</span><input id="modelChannelUrl" type="url" required /></label><label><span>凭据环境变量</span><input id="modelChannelEnv" /></label><label><span>API Key（留空保持不变）</span><input id="modelChannelKey" type="password" autocomplete="new-password" /></label>
+                <label class="wide"><span>模型（逗号或换行分隔）</span><textarea id="modelChannelModels" rows="4"></textarea></label><label class="wide"><span>高级配置 JSON</span><textarea id="modelChannelConfig" rows="4">{}</textarea></label>
+                <label class="model-check"><input id="modelChannelEnabled" type="checkbox" checked /><span>启用渠道</span></label>
+              </div>
+              <div class="modal-actions"><button class="text-button" type="button" data-close-model-channel>取消</button><button class="primary-button" type="submit">保存渠道</button></div>
+            </form>
+          </div>
+
+          <div id="modelRouteModal" class="modal-backdrop" hidden>
+            <form id="modelRouteForm" class="resource-modal model-modal">
+              <div class="panel-header compact"><h2 id="modelRouteModalTitle">新增逻辑模型</h2><button class="icon-button" type="button" data-close-model-route title="关闭"><i data-lucide="x"></i></button></div>
+              <div class="model-form-grid">
+                <label><span>名称</span><input id="modelRouteName" required /></label><label><span>别名</span><input id="modelRouteAlias" required placeholder="news-analysis-default" /></label>
+                <label><span>温度</span><input id="modelRouteTemperature" type="number" min="0" max="2" step="0.1" value="0.2" /></label><label><span>最大输出 Token</span><input id="modelRouteMaxTokens" type="number" min="16" max="32000" value="1200" /></label>
+                <label class="wide"><span>说明</span><textarea id="modelRouteDescription" rows="2"></textarea></label><label class="model-check"><input id="modelRouteEnabled" type="checkbox" checked /><span>启用逻辑模型</span></label>
+                <div class="wide"><div class="model-target-heading"><strong>路由目标</strong><button id="modelAddTarget" class="text-button" type="button"><i data-lucide="plus"></i>添加目标</button></div><div id="modelTargetList" class="model-target-list"></div></div>
+              </div>
+              <div class="modal-actions"><button class="text-button" type="button" data-close-model-route>取消</button><button class="primary-button" type="submit">保存逻辑模型</button></div>
+            </form>
+          </div>
+        </section>
+
+        <section class="market-watch-strip" aria-label="自选行情" data-module="market">
+          <div class="market-watch-toolbar">
+            <div><strong>自选行情</strong><span id="marketStripCount">0 个标的</span></div>
+            <div class="market-watch-actions">
+              <a class="icon-button" href="/watchlist" data-view="watchlist" title="管理自选" aria-label="管理自选"><i data-lucide="list-plus"></i></a>
+              <button id="marketStripPrevious" class="icon-button" type="button" title="向左浏览" aria-label="向左浏览"><i data-lucide="chevron-left"></i></button>
+              <button id="marketStripNext" class="icon-button" type="button" title="向右浏览" aria-label="向右浏览"><i data-lucide="chevron-right"></i></button>
+            </div>
+          </div>
+          <div class="market-strip" id="marketStrip" aria-label="自选标的快捷切换"></div>
+        </section>
+
+        <div id="terminalGrid" class="terminal-grid">
+          <section id="marketPanel" class="chart-panel" data-module="market">
+            <div class="panel-header professional-chart-header">
+              <div class="chart-symbol-heading">
+                <p class="eyebrow">当前标的</p>
+                <h2 id="activeSymbol">AAPL</h2>
+                <div id="chartSourceStatus" class="chart-source-status"></div>
+              </div>
+              <div class="chart-command-bar">
+                <div class="instrument-picker-shell">
+                  <label class="instrument-picker">
+                    <i data-lucide="search"></i>
+                    <input id="chartInstrumentSearch" list="chartInstrumentOptions" placeholder="搜索股票、合约或指数" autocomplete="off" />
+                    <datalist id="chartInstrumentOptions"></datalist>
+                  </label>
+                  <div id="chartInstrumentResults" class="instrument-search-results" role="listbox" hidden></div>
+                </div>
+                <button id="openIndicatorDrawer" class="text-button" type="button"><i data-lucide="chart-no-axes-combined"></i>指标 <span id="chartIndicatorCatalogCount">--</span></button>
+                <details id="newsModeMenu" class="chart-news-menu">
+                  <summary class="icon-button" title="新闻事件" aria-label="新闻事件"><i data-lucide="newspaper"></i></summary>
+                  <div class="chart-news-menu-popover" role="menu" aria-label="新闻事件显示方式">
+                    <button type="button" role="menuitemradio" data-chart-news-mode="key">关键新闻</button>
+                    <button type="button" role="menuitemradio" data-chart-news-mode="all">全部新闻</button>
+                    <button type="button" role="menuitemradio" data-chart-news-mode="off">隐藏新闻</button>
+                  </div>
+                </details>
+                <button id="openLayoutDialog" class="icon-button" type="button" title="指标布局"><i data-lucide="panels-top-left"></i></button>
+                <button id="refreshProfessionalChart" class="icon-button" type="button" title="刷新 K 线"><i data-lucide="refresh-cw"></i></button>
+              </div>
+            </div>
+            <div class="chart-time-toolbar">
+              <div class="chart-time-group">
+                <span class="chart-time-label">K线周期</span>
+                <div id="chartIntervals" class="segmented chart-segment-scroll" aria-label="K 线周期">
+                  <button data-chart-interval="1m" type="button">1m</button>
+                  <button data-chart-interval="3m" type="button">3m</button>
+                  <button data-chart-interval="5m" type="button">5m</button>
+                  <button class="active" data-chart-interval="15m" type="button">15m</button>
+                  <button data-chart-interval="30m" type="button">30m</button>
+                  <button data-chart-interval="1h" type="button">1h</button>
+                  <button data-chart-interval="2h" type="button">2h</button>
+                  <button data-chart-interval="4h" type="button">4h</button>
+                  <button data-chart-interval="1d" type="button">1D</button>
+                  <button data-chart-interval="1w" type="button">1W</button>
+                  <button data-chart-interval="1mo" type="button">1月</button>
+                </div>
+              </div>
+              <div class="chart-time-group">
+                <span class="chart-time-label">时间范围</span>
+                <div id="chartRanges" class="segmented chart-segment-scroll chart-range-selector" aria-label="时间范围">
+                  <button data-chart-range="1D" type="button">1D</button>
+                  <button data-chart-range="5D" type="button">5D</button>
+                  <button class="active" data-chart-range="1M" type="button">1M</button>
+                  <button data-chart-range="3M" type="button">3M</button>
+                  <button data-chart-range="6M" type="button">6M</button>
+                  <button data-chart-range="YTD" type="button">YTD</button>
+                  <button data-chart-range="1Y" type="button">1Y</button>
+                  <button data-chart-range="3Y" type="button">3Y</button>
+                  <button data-chart-range="5Y" type="button">5Y</button>
+                  <button data-chart-range="Max" type="button">Max</button>
+                </div>
+              </div>
+            </div>
+            <div class="chart-wrap professional-chart-wrap">
+              <div id="priceChart" aria-label="专业 K 线图"></div>
+              <div id="chartLoading" class="chart-loading" hidden>正在加载 K 线...</div>
+              <div id="eventTooltip" class="event-tooltip" role="tooltip" aria-live="polite" hidden></div>
+            </div>
+            <div id="chartWarnings" class="chart-warning-strip" hidden></div>
+            <div id="chartEventSummary" class="chart-event-summary" aria-live="polite" hidden></div>
+            <div class="chart-footer">
+              <span><b id="lastPrice">--</b> 最新价</span>
+              <span><b id="lastChange">--</b> 涨跌幅</span>
+              <span><b id="trendScore">--</b> 趋势评分</span>
+            </div>
+          </section>
+
+          <aside class="right-rail">
+            <section id="aiPanel" class="tool-panel" data-module="ai">
+              <div class="panel-header compact">
+                <h2>AI 实时盯盘</h2>
+                <button id="refreshBriefing" class="text-button" type="button">简报</button>
+              </div>
+              <div id="aiBriefing" class="briefing-card"></div>
+              <div id="aiFeed" class="stack-list"></div>
+            </section>
+
+            <section class="tool-panel" data-module="market">
+              <div class="panel-header compact">
+                <h2>指标资源</h2>
+                <div class="panel-header-actions"><span id="signalBadge" class="badge neutral">实时源</span><button class="text-button" type="button" data-open-indicator-drawer>技术指标</button></div>
+              </div>
+              <div id="indicatorGrid" class="indicator-grid"></div>
+            </section>
+
+            <section id="factorSignalPanel" class="tool-panel" data-module="factors backtest">
+              <div class="panel-header compact">
+                <h2>因子推荐</h2>
+                <span id="factorCount">0</span>
+              </div>
+              <div id="factorList" class="stack-list"></div>
+            </section>
+
+            <section id="alertPanel" class="tool-panel" data-module="alerts">
+              <div class="panel-header compact">
+                <h2>预警</h2>
+                <button id="evaluateAlerts" class="text-button" type="button">评估</button>
+              </div>
+              <form id="alertForm" class="alert-form">
+                <input id="alertName" type="text" placeholder="预警名称" autocomplete="off" required />
+                <select id="alertMetric">
+                  <option value="price">价格</option>
+                  <option value="rsi">RSI</option>
+                  <option value="news_impact">新闻影响分</option>
+                </select>
+                <select id="alertOperator">
+                  <option value=">=">&gt;=</option>
+                  <option value="<=">&lt;=</option>
+                </select>
+                <input id="alertThreshold" type="number" step="0.01" placeholder="阈值" required />
+                <button class="text-button" type="submit">添加</button>
+                <small id="alertStatus"></small>
+              </form>
+              <div id="alertList" class="alert-list"></div>
+            </section>
+
+            <section class="tool-panel" data-module="alerts">
+              <div class="panel-header compact">
+                <h2>通知</h2>
+                <span id="deliveryCount">0</span>
+              </div>
+              <form id="channelForm" class="channel-form">
+                <input id="channelName" type="text" placeholder="Webhook 名称" autocomplete="off" required />
+                <input id="channelTarget" type="url" placeholder="Webhook URL" autocomplete="off" required />
+                <button class="text-button" type="submit">添加</button>
+                <small id="channelStatus"></small>
+              </form>
+              <div id="channelList" class="channel-list"></div>
+            </section>
+
+            <section class="tool-panel" data-module="market">
+              <div class="panel-header compact">
+                <h2>系统状态</h2>
+                <span id="healthBadge" class="badge neutral">--</span>
+              </div>
+              <div id="healthList" class="health-list"></div>
+            </section>
+
+            <section class="tool-panel" data-module="market backtest">
+              <div class="panel-header compact">
+                <h2>市场状态</h2>
+                <button class="text-button" type="button" data-export="regime-scenario-risk">导出情景</button>
+                <span id="regimeBadge" class="badge neutral">--</span>
+              </div>
+              <div id="marketRegime" class="research-list"></div>
+              <div id="marketRegimeTransition" class="research-list"></div>
+              <div id="regimeScenarioRisk" class="research-list"></div>
+              <div id="regimeExposure" class="research-list"></div>
+            </section>
+
+            <section class="tool-panel" data-module="market">
+              <div class="panel-header compact">
+                <h2>应用设置</h2>
+                <span id="settingsSummary">--</span>
+              </div>
+              <form id="settingsForm" class="settings-form">
+                <label>
+                  <span>默认信号</span>
+                  <select id="settingsSignal">
+                    <option value="all">全部</option>
+                    <option value="strong_buy">强买入</option>
+                    <option value="buy">买入</option>
+                    <option value="neutral">中性</option>
+                    <option value="sell">卖出</option>
+                    <option value="strong_sell">强卖出</option>
+                  </select>
+                </label>
+                <label>
+                  <span>默认 RSI 下限</span>
+                  <input id="settingsRsi" type="number" min="0" max="100" step="1" />
+                </label>
+                <label class="check-row inline-check">
+                  <input id="settingsPositiveOnly" type="checkbox" />
+                  <span>默认仅显示上涨</span>
+                </label>
+                <label class="check-row inline-check">
+                  <input id="settingsAutomationEnabled" type="checkbox" />
+                  <span>定时盯盘</span>
+                </label>
+                <input id="settingsAutomationInterval" type="number" min="60" step="60" aria-label="默认自动运行间隔秒" />
+                <button class="text-button" type="submit">保存设置</button>
+                <small id="settingsStatus"></small>
+              </form>
+            </section>
+
+            <section class="tool-panel" data-module="market">
+              <div class="panel-header compact">
+                <h2>条件筛选</h2>
+                <button id="clearFilters" class="text-button" type="button">重置</button>
+              </div>
+              <label class="filter-row">
+                <span>信号</span>
+                <select id="signalFilter">
+                  <option value="all">全部</option>
+                  <option value="strong_buy">强买入</option>
+                  <option value="buy">买入</option>
+                  <option value="neutral">中性</option>
+                  <option value="sell">卖出</option>
+                </select>
+              </label>
+              <label class="filter-row">
+                <span>RSI 下限</span>
+                <input id="rsiFilter" type="range" min="0" max="80" value="0" />
+                <b id="rsiValue">0</b>
+              </label>
+              <label class="check-row">
+                <input id="positiveOnly" type="checkbox" />
+                <span>仅显示上涨标的</span>
+              </label>
+            </section>
+          </aside>
+        </div>
+
+        <section class="bottom-workbench">
+          <div id="watchlistPanel" class="workbench-panel" data-module="legacy-watchlist" hidden aria-hidden="true">
+            <div class="panel-header compact">
+              <h2>自选观察</h2>
+              <button class="text-button" type="button" data-export="watchlist">导出</button>
+            </div>
+            <div class="panel-subline"><span id="matchCount">0 个标的</span></div>
+            <form id="watchlistForm" class="watchlist-form">
+              <input id="watchlistSymbol" type="text" list="symbolOptions" placeholder="添加代码，如 AAPL" autocomplete="off" required />
+              <datalist id="symbolOptions"></datalist>
+              <button class="text-button" type="submit">添加</button>
+              <small id="watchlistStatus"></small>
+            </form>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>代码</th>
+                    <th>市场</th>
+                    <th>价格</th>
+                    <th>涨跌幅</th>
+                    <th>RSI</th>
+                    <th>MACD</th>
+                    <th>信号</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="watchlistBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="newsPanel" class="workbench-panel" data-module="market news">
+            <div class="panel-header compact">
+              <div><h2 id="newsPanelTitle">关键新闻</h2><small id="newsPanelContext" class="panel-context"></small></div>
+              <span id="newsCount">0 条</span>
+            </div>
+            <div id="newsFeedToolbar" class="news-feed-toolbar" aria-label="新闻浏览条件">
+              <div class="segmented news-scope-control" role="group" aria-label="新闻范围">
+                <button class="active" type="button" data-news-scope="global">全市场</button>
+                <button type="button" data-news-scope="symbol">当前标的</button>
+              </div>
+              <div class="news-feed-controls">
+                <div id="newsSourceFilter" class="news-source-filter">
+                  <button id="newsSourceFilterButton" class="text-button news-source-filter-button" type="button" aria-expanded="false" aria-controls="newsSourceFilterMenu"><i data-lucide="list-filter"></i><span>全部来源</span><i data-lucide="chevron-down"></i></button>
+                  <div id="newsSourceFilterMenu" class="news-source-filter-menu" hidden>
+                    <label class="news-source-filter-search"><i data-lucide="search"></i><input id="newsSourceFilterSearch" type="search" placeholder="搜索新闻源" autocomplete="off" /></label>
+                    <div class="news-source-filter-actions"><button id="selectAllNewsSources" class="text-button" type="button">全选</button><button id="clearNewsSources" class="text-button" type="button">清空</button></div>
+                    <div id="newsSourceFilterOptions" class="news-source-filter-options"></div>
+                    <a class="news-source-filter-manage" href="/admin/news-sources"><i data-lucide="settings-2"></i>管理新闻源</a>
+                  </div>
+                </div>
+                <span id="newsRefreshStatus" class="news-refresh-status" role="status" aria-live="polite"></span>
+                <div id="newsRefreshControl" class="news-refresh-control">
+                  <button id="refreshNewsFeed" class="icon-button" type="button" title="刷新新闻列表" aria-label="刷新新闻列表"><i data-lucide="refresh-cw"></i></button>
+                  <div id="newsSyncDropdown" class="news-sync-dropdown admin-write">
+                    <button id="newsSyncMenuButton" class="icon-button news-sync-menu-button" type="button" title="新闻源同步选项" aria-label="新闻源同步选项" aria-expanded="false" aria-controls="newsSyncMenu"><i data-lucide="chevron-down"></i></button>
+                    <div id="newsSyncMenu" class="news-sync-menu" hidden>
+                      <button id="syncNewsSources" type="button"><i data-lucide="rss"></i><span id="newsSyncScopeLabel">同步全部来源并刷新</span></button>
+                      <a href="/admin/news-sources"><i data-lucide="activity"></i>查看刷新诊断</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div id="newsTimeline" class="news-timeline"></div>
+            <div id="newsFeedFooter" class="news-feed-footer"><span id="newsFeedProgress"></span><button id="loadMoreNews" class="text-button" type="button">加载更多</button></div>
+          </div>
+
+          <div id="breadthWorkbenchPanel" class="workbench-panel" data-module="market">
+            <div class="panel-header compact">
+              <h2>市场广度</h2>
+              <span id="breadthBadge" class="badge neutral">--</span>
+            </div>
+            <div id="breadthPanel" class="breadth-panel"></div>
+            <div id="breadthHeatmap" class="breadth-heatmap"></div>
+          </div>
+
+          <div class="workbench-panel" data-module="market">
+            <div class="panel-header compact">
+              <h2>条件选股</h2>
+              <button class="text-button" type="button" data-export="screener">导出</button>
+            </div>
+            <div class="panel-subline"><span id="screenerCount">0 个</span></div>
+            <form id="screenerForm" class="screener-form">
+              <input id="screenerMinChange" type="number" step="0.1" placeholder="最小涨跌%" />
+              <input id="screenerMinRsi" type="number" min="0" max="100" step="1" placeholder="最小 RSI" />
+              <input id="screenerMinTrend" type="number" min="0" max="100" step="1" placeholder="最小趋势" />
+              <select id="screenerSignal">
+                <option value="">全部信号</option>
+                <option value="strong_buy">强买入</option>
+                <option value="buy">买入</option>
+                <option value="neutral">中性</option>
+                <option value="sell">卖出</option>
+                <option value="strong_sell">强卖出</option>
+              </select>
+              <button class="text-button" type="submit">筛选</button>
+              <button id="resetScreener" class="text-button" type="button">重置</button>
+            </form>
+            <form id="screenerPresetForm" class="screener-form">
+              <input id="screenerPresetName" type="text" placeholder="模板名称" autocomplete="off" required />
+              <button class="text-button" type="submit">保存模板</button>
+              <small id="screenerPresetStatus"></small>
+            </form>
+            <div class="validation-actions">
+              <button id="validateFilters" class="text-button" type="button">验证过滤器</button>
+              <button class="text-button" type="button" data-export="filter-library">导出过滤器库</button>
+              <button class="text-button" type="button" data-export="filter-strategy-coverage">导出复用</button>
+              <small id="filterValidationStatus"></small>
+            </div>
+            <div id="filterValidationResult" class="research-list"></div>
+            <div id="filterAdmissionResult" class="research-list"></div>
+            <div id="filterContributionResult" class="research-list"></div>
+            <div id="filterStressTestResult" class="research-list"></div>
+            <div id="regimePlaybook" class="playbook-panel"></div>
+            <div id="regimeFilterTemplates" class="regime-filter-list"></div>
+            <div id="filterLibraryScore" class="research-list"></div>
+            <div id="filterStrategyCoverage" class="research-list"></div>
+            <div id="screenerPresetList" class="screener-preset-list"></div>
+            <div id="screenerList" class="screener-list"></div>
+          </div>
+
+          <div class="workbench-panel" data-module="factors">
+            <div class="panel-header compact">
+              <h2>数据与策略库</h2>
+              <span id="dataCatalogCount">0 项</span>
+            </div>
+            <div class="validation-actions">
+              <button id="backfillResearchCoverage" class="text-button" type="button">补齐覆盖</button>
+              <button id="backfillFactorCoverage" class="text-button" type="button">补齐因子</button>
+              <button class="text-button" type="button" data-export="data-quality">导出质量</button>
+              <button class="text-button" type="button" data-export="data-freshness">导出新鲜度</button>
+              <button class="text-button" type="button" data-export="research-coverage">导出覆盖</button>
+              <button class="text-button" type="button" data-export="research-health">导出健康</button>
+              <button class="text-button" type="button" data-export="factor-lifecycle">导出因子生命周期</button>
+              <button class="text-button" type="button" data-export="strategy-lifecycle">导出策略生命周期</button>
+              <button class="text-button" type="button" data-export="strategy-risk-controls">导出风控审计</button>
+              <button class="text-button" type="button" data-export="market-state-controls">导出状态总览</button>
+              <button class="text-button" type="button" data-export="strategy-operating-plan">导出操作计划</button>
+              <button class="text-button" type="button" data-export="strategy-evidence-packs">导出证据包</button>
+              <button class="text-button" type="button" data-export="strategy-crowding">导出策略拥挤</button>
+              <button class="text-button" type="button" data-export="strategy-validation-decay">导出验证衰减</button>
+              <button class="text-button" type="button" data-export="strategy-backtest-monitor">导出回测观察</button>
+              <button class="text-button" type="button" data-export="strategy-forward-monitor">导出前向观察</button>
+              <button class="text-button" type="button" data-export="strategy-sensitivity">导出敏感性</button>
+              <button class="text-button" type="button" data-export="strategy-revalidation-plan">导出状态复验</button>
+              <button class="text-button" type="button" data-export="strategy-validation-coverage">导出验证覆盖</button>
+              <button class="text-button" type="button" data-export="research-run-audit">导出运行审计</button>
+              <button class="text-button" type="button" data-export="research-action-plan">导出计划</button>
+              <small id="backfillResearchStatus"></small>
+            </div>
+            <div id="researchHealth" class="research-list"></div>
+            <div id="researchDashboard" class="research-list"></div>
+            <div id="researchReadiness" class="research-list"></div>
+            <div id="marketStateControls" class="research-list"></div>
+            <div id="strategyOperatingPlan" class="research-list"></div>
+            <div id="strategyEvidencePacks" class="research-list"></div>
+            <div id="researchActionPlan" class="research-list"></div>
+            <div id="strategyCandidates" class="research-list"></div>
+            <div id="admissionQueue" class="research-list"></div>
+            <div id="revalidationQueue" class="research-list"></div>
+            <div id="researchRunAudit" class="research-list"></div>
+            <div id="dataQuality" class="research-list"></div>
+            <div id="dataFreshness" class="research-list"></div>
+            <div id="researchCoverage" class="research-list"></div>
+            <div id="factorCoverage" class="research-list"></div>
+            <div id="factorLifecycle" class="research-list"></div>
+            <div id="dataLineage" class="research-list"></div>
+            <div id="dataCatalogList" class="research-list"></div>
+            <form id="strategyForm" class="factor-form">
+              <input id="strategyName" type="text" placeholder="策略名称" autocomplete="off" required />
+              <input id="strategyCategory" type="text" placeholder="分类" autocomplete="off" required />
+              <select id="strategyFactor"></select>
+              <textarea id="strategyDescription" rows="2" placeholder="策略逻辑描述" required></textarea>
+              <button class="text-button" type="submit">保存当前过滤器为策略</button>
+              <small id="strategyStatus"></small>
+            </form>
+            <div id="strategyLeaderboard" class="research-list"></div>
+            <div id="strategyRegimeFit" class="research-list"></div>
+            <div id="strategyRegimeMatrix" class="research-list"></div>
+            <div id="strategyCrowding" class="research-list"></div>
+            <div id="strategyLifecycle" class="research-list"></div>
+            <div id="strategyRiskControls" class="research-list"></div>
+            <div id="strategyBacktestMonitor" class="research-list"></div>
+            <div id="strategyForwardMonitor" class="research-list"></div>
+            <div id="strategySensitivity" class="research-list"></div>
+            <div id="strategyRevalidationPlan" class="research-list"></div>
+            <div id="strategyValidationCoverage" class="research-list"></div>
+            <div id="strategyTemplateList" class="research-list"></div>
+            <div id="strategyValidationDecay" class="research-list"></div>
+            <div id="strategyValidationList" class="research-list"></div>
+          </div>
+
+          <div id="backtestPanel" class="workbench-panel" data-module="factors backtest">
+            <div class="panel-header compact">
+              <h2>因子回测</h2>
+              <button class="text-button" type="button" data-export="backtests">导出</button>
+            </div>
+            <div class="panel-subline"><span id="backtestCount">0 个</span></div>
+            <div id="tradeReadiness" class="trade-readiness-panel"></div>
+            <div id="regimeRiskGate" class="trade-readiness-panel"></div>
+            <div id="backtestBenchmark" class="research-list"></div>
+            <div id="backtestForwardConsistency" class="research-list"></div>
+            <div id="robustnessMatrix" class="robustness-matrix"></div>
+            <div id="strategyDrift" class="drift-panel"></div>
+            <div id="strategyAllocation" class="allocation-panel"></div>
+            <div id="factorAdmission" class="admission-panel"></div>
+            <form id="backtestForm" class="backtest-form">
+              <select id="backtestFactor"></select>
+              <select id="backtestInterval">
+                <option value="1h">1h</option>
+                <option value="15m">15m</option>
+                <option value="4h">4h</option>
+                <option value="1d">1d</option>
+              </select>
+              <button class="text-button" type="submit">运行</button>
+              <button id="runResearchPipeline" class="text-button" type="button">一键验证</button>
+              <button id="runFactorAdmission" class="text-button" type="button">准入包</button>
+              <button id="runSensitivityTest" class="text-button" type="button">敏感性</button>
+              <button id="runParameterOptimization" class="text-button" type="button">参数优化</button>
+              <small id="backtestStatus"></small>
+              <small id="pipelineStatus"></small>
+              <small id="admissionStatus"></small>
+              <small id="sensitivityStatus"></small>
+              <small id="optimizationStatus"></small>
+            </form>
+            <form id="forwardTestForm" class="backtest-form">
+              <select id="forwardFactor"></select>
+              <select id="forwardInterval">
+                <option value="1h">1h</option>
+                <option value="15m">15m</option>
+                <option value="4h">4h</option>
+                <option value="1d">1d</option>
+              </select>
+              <button class="text-button" type="submit">前向测试</button>
+              <small id="forwardTestStatus"></small>
+            </form>
+            <form id="walkForwardTestForm" class="backtest-form">
+              <select id="walkForwardFactor"></select>
+              <select id="walkForwardInterval">
+                <option value="1h">1h</option>
+                <option value="15m">15m</option>
+                <option value="4h">4h</option>
+                <option value="1d">1d</option>
+              </select>
+              <button class="text-button" type="submit">滚动验证</button>
+              <small id="walkForwardTestStatus"></small>
+            </form>
+            <form id="stressTestForm" class="backtest-form">
+              <select id="stressFactor"></select>
+              <select id="stressInterval">
+                <option value="1h">1h</option>
+                <option value="15m">15m</option>
+                <option value="4h">4h</option>
+                <option value="1d">1d</option>
+              </select>
+              <button class="text-button" type="submit">压力测试</button>
+              <small id="stressTestStatus"></small>
+            </form>
+            <form id="factorForm" class="factor-form">
+              <input id="factorName" type="text" placeholder="新因子名称" autocomplete="off" required />
+              <input id="factorCategory" type="text" placeholder="分类" autocomplete="off" required />
+              <select id="factorSignal">
+                <option value="long">Long</option>
+                <option value="short">Short</option>
+                <option value="neutral">Neutral</option>
+              </select>
+              <input id="factorHorizon" type="text" placeholder="周期，如 3-10 days" autocomplete="off" value="3-10 days" />
+              <textarea id="factorDescription" rows="2" placeholder="因子逻辑描述" required></textarea>
+              <button class="text-button" type="submit">加入因子库</button>
+              <small id="factorStatus"></small>
+            </form>
+            <div id="factorDefinitionList" class="factor-definition-list"></div>
+            <div id="factorLeaderboard" class="factor-leaderboard"></div>
+            <div id="factorCorrelation" class="correlation-panel"></div>
+            <div id="regimeFactorFit" class="factor-leaderboard"></div>
+            <div id="regimeAttribution" class="attribution-panel"></div>
+            <div id="parameterOptimizationResult" class="optimization-panel"></div>
+            <div id="sensitivityTestResult" class="backtest-list"></div>
+            <div id="forwardLeaderboard" class="backtest-list"></div>
+            <div id="forwardTestList" class="backtest-list"></div>
+            <div id="walkForwardLeaderboard" class="backtest-list"></div>
+            <div id="walkForwardTestList" class="backtest-list"></div>
+            <div id="stressLeaderboard" class="backtest-list"></div>
+            <div id="stressTestList" class="backtest-list"></div>
+            <div id="backtestList" class="backtest-list"></div>
+          </div>
+
+          <section id="paperTradingPanel" class="workbench-panel paper-terminal" data-module="market">
+            <div class="paper-terminal-head">
+              <div><p class="eyebrow">Paper Trading</p><h2>模拟交易账户</h2></div>
+              <div class="paper-terminal-actions">
+                <div id="paperAccountTabs" class="segmented paper-account-tabs" aria-label="模拟账户币种"></div>
+                <button id="runPaperMatching" class="icon-button" type="button" title="立即撮合"><i data-lucide="refresh-cw"></i></button>
+                <button id="openPaperOrderTicket" class="primary-button" type="button"><i data-lucide="panel-right-open"></i>下单</button>
+              </div>
+            </div>
+            <div id="paperAccountMetrics" class="paper-account-metrics"></div>
+            <div class="paper-terminal-tabs" role="tablist">
+              <button class="active" type="button" data-paper-tab="positions">持仓 <b id="paperPositionCount">0</b></button>
+              <button type="button" data-paper-tab="orders">当前委托 <b id="paperOrderCount">0</b></button>
+              <button type="button" data-paper-tab="fills">成交</button>
+              <button type="button" data-paper-tab="history">历史委托</button>
+              <button type="button" data-paper-tab="cash">资金</button>
+            </div>
+            <div id="paperTradingTable" class="paper-table-wrap"></div>
+            <div id="portfolioList" hidden></div><div id="portfolioRisk" hidden></div><span id="portfolioPnl" hidden></span>
+          </section>
+
+          <div class="workbench-panel" data-module="ai alerts">
+            <div class="panel-header compact">
+              <h2>事件日志</h2>
+              <button id="runAutomation" class="text-button" type="button">一键盯盘</button>
+            </div>
+            <form id="automationForm" class="automation-form">
+              <label class="check-row inline-check">
+                <input id="automationEnabled" type="checkbox" />
+                <span>定时运行</span>
+              </label>
+              <input id="automationInterval" type="number" min="60" step="60" value="300" aria-label="自动运行间隔秒" />
+              <button class="text-button" type="submit">保存</button>
+            </form>
+            <div id="automationStatus" class="automation-status">等待运行</div>
+            <div id="automationRuns" class="automation-runs"></div>
+            <div id="eventLog" class="event-log"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div id="newsDrawer" class="drawer-backdrop" hidden>
+      <aside class="news-drawer" role="dialog" aria-modal="true" aria-labelledby="newsDrawerTitle">
+        <div class="panel-header compact">
+          <h2 id="newsDrawerTitle">新闻详情</h2>
+          <button id="closeNewsDrawer" class="icon-action" type="button" title="关闭">×</button>
+        </div>
+        <div id="newsDrawerBody" class="news-drawer-body"></div>
+      </aside>
+    </div>
+    <div id="financialCalendarDrawer" class="drawer-backdrop" hidden>
+      <aside class="news-drawer financial-calendar-drawer" role="dialog" aria-modal="true" aria-labelledby="financialCalendarDrawerTitle">
+        <div class="panel-header compact"><div><p class="eyebrow">Financial Event</p><h2 id="financialCalendarDrawerTitle">财经事件详情</h2></div><button id="closeFinancialCalendarDrawer" class="icon-button" type="button" title="关闭"><i data-lucide="x"></i></button></div>
+        <div id="financialCalendarDrawerBody" class="news-drawer-body"></div>
+      </aside>
+    </div>
+    <div id="newsSymbolModal" class="modal-backdrop" hidden>
+      <form id="newsSymbolForm" class="resource-modal news-symbol-modal">
+        <div class="panel-header compact">
+          <div><h2>编辑关联标的</h2><p id="newsSymbolArticleTitle"></p></div>
+          <button id="closeNewsSymbolModal" class="icon-action" type="button" title="关闭">×</button>
+        </div>
+        <div class="news-symbol-editor">
+          <div class="segmented-control" aria-label="关联类型">
+            <button class="active" type="button" data-news-symbol-relation="primary">主要关联</button>
+            <button type="button" data-news-symbol-relation="secondary">次要关联</button>
+          </div>
+          <label><span>搜索平台标的</span><input id="newsSymbolSearch" type="search" placeholder="代码、名称或市场" autocomplete="off" /></label>
+          <div id="newsSymbolSearchResults" class="news-symbol-results"></div>
+          <section><strong>主要关联 · 显示在 K 线</strong><div id="newsPrimarySymbols" class="news-symbol-selection"></div></section>
+          <section><strong>次要关联 · 仅作为上下文</strong><div id="newsSecondarySymbols" class="news-symbol-selection"></div></section>
+          <label><span>审核备注</span><textarea id="newsSymbolNote" rows="3" maxlength="500"></textarea></label>
+        </div>
+        <div class="modal-actions">
+          <button id="restoreNewsSymbols" class="text-button" type="button">恢复自动识别</button>
+          <button id="cancelNewsSymbolModal" class="text-button" type="button">取消</button>
+          <button class="primary-button" type="submit">保存关联</button>
+        </div>
+      </form>
+    </div>
+    <div id="watchlistDrawer" class="drawer-backdrop" hidden>
+      <aside class="news-drawer" role="dialog" aria-modal="true" aria-labelledby="watchlistDrawerTitle">
+        <form id="watchlistResourceForm">
+          <div class="panel-header compact">
+            <h2 id="watchlistDrawerTitle">编辑 Watchlist</h2>
+            <button id="closeWatchlistDrawer" class="icon-action" type="button" title="关闭"><i data-lucide="x"></i></button>
+          </div>
+          <div class="news-drawer-body watchlist-drawer-form">
+            <div id="watchlistDrawerSummary" class="drawer-symbol-summary"></div>
+            <label><span>标的代码</span><input id="watchlistResourceSymbol" type="text" list="symbolOptions" autocomplete="off" placeholder="搜索股票、ETF、虚拟货币或指数" required /></label>
+            <div id="watchlistInstrumentResults" class="instrument-search-results watchlist-instrument-results" role="listbox"></div>
+            <label><span>分组</span><select id="watchlistResourceGroup" required></select></label>
+            <label><span>标签</span><input id="watchlistResourceTags" type="text" placeholder="多个标签使用逗号分隔" autocomplete="off" /></label>
+            <label><span>备注</span><textarea id="watchlistResourceNote" rows="5" maxlength="500" placeholder="记录关注原因、催化剂或风险"></textarea></label>
+            <small id="watchlistResourceStatus"></small>
+            <div class="modal-actions"><button id="cancelWatchlistDrawer" class="text-button" type="button">取消</button><button class="primary-button admin-write" type="submit">保存</button></div>
+          </div>
+        </form>
+      </aside>
+    </div>
+    <div id="paperOrderDrawer" class="drawer-backdrop paper-order-backdrop" hidden>
+      <aside class="paper-order-drawer" role="dialog" aria-modal="true" aria-labelledby="paperOrderTitle">
+        <div class="panel-header compact"><div><p class="eyebrow">Paper Trading</p><h2 id="paperOrderTitle">新建模拟委托</h2></div><button id="closePaperOrderTicket" class="icon-button" type="button" title="关闭"><i data-lucide="x"></i></button></div>
+        <form id="positionForm" class="paper-order-form">
+          <div class="position-instrument-picker paper-order-symbol">
+            <label><span>交易标的</span><input id="positionSymbol" type="search" role="combobox" aria-expanded="false" aria-controls="positionInstrumentResults" placeholder="搜索代码或名称" autocomplete="off" required /></label>
+            <input id="positionInstrumentId" type="hidden" />
+            <div id="positionInstrumentResults" class="instrument-search-results position-instrument-results" role="listbox" hidden></div>
+          </div>
+          <div class="paper-segment-field"><span>方向</span><div class="segmented"><button class="active" type="button" data-paper-side="long">做多</button><button type="button" data-paper-side="short">做空</button></div><select id="positionSide" hidden><option value="long">Long</option><option value="short">Short</option></select></div>
+          <div class="paper-segment-field"><span>仓位操作</span><div class="segmented"><button class="active" type="button" data-paper-effect="open">开仓</button><button type="button" data-paper-effect="close">平仓</button></div><input id="paperOrderEffect" type="hidden" value="open" /></div>
+          <label><span>订单类型</span><select id="paperOrderType"><option value="market">市价</option><option value="limit">限价</option><option value="stop">止损</option><option value="stop_limit">止损限价</option></select></label>
+          <div class="paper-order-grid"><label><span>数量</span><input id="positionQuantity" type="number" min="0.0001" step="0.0001" required /></label><label><span>单位</span><select id="positionQuantityUnit" disabled><option value="">单位</option></select></label></div>
+          <label id="paperLimitField" hidden><span>限价</span><input id="paperLimitPrice" type="number" min="0.000001" step="any" /></label>
+          <label id="paperStopField" hidden><span>触发价</span><input id="paperStopPrice" type="number" min="0.000001" step="any" /></label>
+          <div class="paper-order-grid"><label><span>止盈（可选）</span><input id="paperTakeProfit" type="number" min="0.000001" step="any" /></label><label><span>止损（可选）</span><input id="paperStopLoss" type="number" min="0.000001" step="any" /></label></div>
+          <label><span>有效期</span><select id="paperTimeInForce"><option value="day">当日有效</option><option value="gtc">撤销前有效</option></select></label>
+          <input id="positionAveragePrice" type="hidden" /><span id="positionPriceCurrency" hidden>--</span>
+          <div id="paperOrderEstimate" class="paper-order-estimate">选择标的后显示预估金额</div>
+          <small id="positionQuoteStatus" class="position-quote-status">选择标的后自动获取当前市场价格</small>
+          <small id="positionStatus" role="status"></small>
+          <div class="paper-order-submit"><button id="cancelPaperOrder" class="text-button" type="button">取消</button><button class="primary-button" type="submit"><i data-lucide="send"></i>提交模拟委托</button></div>
+        </form>
+      </aside>
+    </div>
+    <div id="watchlistGroupModal" class="modal-backdrop" hidden>
+      <section class="resource-modal" role="dialog" aria-modal="true" aria-labelledby="watchlistGroupTitle">
+        <div class="panel-header compact"><h2 id="watchlistGroupTitle">Watchlist 分组</h2><button id="closeWatchlistGroups" class="icon-button" type="button" title="关闭"><i data-lucide="x"></i></button></div>
+        <div class="resource-fields">
+          <div id="watchlistGroupList" class="source-list"></div>
+          <form id="watchlistGroupForm" class="source-form">
+            <input id="watchlistGroupName" type="text" maxlength="40" placeholder="新分组名称" required />
+            <select id="watchlistGroupColor" aria-label="分组颜色"><option value="blue">蓝色</option><option value="green">绿色</option><option value="yellow">黄色</option><option value="red">红色</option><option value="gray">灰色</option><option value="purple">紫色</option></select>
+            <button class="primary-button admin-write" type="submit">创建分组</button>
+            <small id="watchlistGroupStatus"></small>
+          </form>
+        </div>
+      </section>
+    </div>
+    <div id="indicatorDrawer" class="drawer-backdrop" hidden>
+      <aside class="indicator-drawer" role="dialog" aria-modal="true" aria-labelledby="indicatorDrawerTitle">
+        <div class="panel-header compact">
+          <div><p class="eyebrow">专业指标</p><h2 id="indicatorDrawerTitle">主图与副图</h2></div>
+          <button id="closeIndicatorDrawer" class="icon-button" type="button" title="关闭"><i data-lucide="x"></i></button>
+        </div>
+        <div class="indicator-drawer-tools">
+          <div class="credential-search"><i data-lucide="search"></i><input id="indicatorSearch" type="search" placeholder="搜索指标" /></div>
+          <div id="indicatorCategoryTabs" class="chart-range-tabs"></div>
+        </div>
+        <div id="activeIndicatorList" class="active-indicator-list"></div>
+        <div id="indicatorCatalog" class="indicator-catalog"></div>
+      </aside>
+    </div>
+    <div id="chartLayoutModal" class="modal-backdrop" hidden>
+      <form id="chartLayoutForm" class="resource-modal compact-modal">
+        <div class="panel-header compact"><h2>指标布局</h2><button id="closeLayoutDialog" class="icon-button" type="button" title="关闭"><i data-lucide="x"></i></button></div>
+        <div class="resource-fields">
+          <label><span>加载布局</span><select id="chartLayoutSelect"><option value="">当前临时布局</option></select></label>
+          <label><span>布局名称</span><input id="chartLayoutName" maxlength="80" placeholder="例如：加密合约盯盘" /></label>
+          <label class="resource-check"><input id="chartLayoutDefault" type="checkbox" /><span>设为当前资产默认布局</span></label>
+          <small id="chartLayoutStatus"></small>
+        </div>
+        <div class="modal-actions"><button id="deleteChartLayout" class="text-button" type="button">删除</button><button class="primary-button" type="submit">保存布局</button></div>
+      </form>
+    </div>
+    <script src="/static/vendor/lucide.min.js"></script>
+    <script type="module" src="/static/workspace/bootstrap.js?v=20260910.1"></script>
+  </body>
+</html>

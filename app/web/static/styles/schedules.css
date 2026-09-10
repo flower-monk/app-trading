@@ -1,0 +1,351 @@
+.schedule-page .admin-sidebar {
+  overflow: hidden;
+}
+
+.schedule-page .admin-sidebar .brand strong {
+  color: #f5f5f7;
+}
+
+.schedule-nav {
+  display: grid;
+  gap: 4px;
+  margin-top: 22px;
+}
+
+.schedule-nav > strong {
+  padding: 0 10px 6px;
+  color: #69768a;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+
+.schedule-nav button,
+.schedule-side-links a {
+  display: grid;
+  min-height: 38px;
+  align-items: center;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #c9d1df;
+  text-align: left;
+}
+
+.schedule-nav button {
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  gap: 8px;
+  padding: 0 10px;
+}
+
+.schedule-nav button:hover,
+.schedule-nav button.active {
+  background: #1b2230;
+  color: #fff;
+}
+
+.schedule-nav svg,
+.schedule-side-links svg {
+  width: 15px;
+  height: 15px;
+}
+
+.schedule-nav b {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.schedule-side-links {
+  display: grid;
+  gap: 3px;
+  margin-top: auto;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+
+.schedule-side-links a {
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 8px;
+  padding: 0 10px;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.schedule-side-links a:hover {
+  background: #1b2230;
+  color: #fff;
+}
+
+.schedule-workbench {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.schedule-toolbar,
+.schedule-filters,
+.schedule-actions,
+.schedule-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.schedule-toolbar,
+.schedule-footer {
+  justify-content: space-between;
+}
+
+.schedule-toolbar {
+  min-height: 64px;
+  border-bottom: 1px solid var(--line);
+  padding: 10px 14px;
+}
+
+.schedule-search {
+  position: relative;
+}
+
+.schedule-search svg {
+  position: absolute;
+  top: 11px;
+  left: 10px;
+  width: 16px;
+  height: 16px;
+  color: var(--muted);
+  pointer-events: none;
+}
+
+.schedule-search input,
+.schedule-filters select {
+  min-height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel-2);
+  color: var(--text);
+}
+
+.schedule-search input {
+  width: min(330px, 32vw);
+  padding: 0 11px 0 34px;
+}
+
+.schedule-filters select {
+  min-width: 142px;
+  padding: 0 10px;
+}
+
+.schedule-actions > span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.schedule-table-wrap {
+  overflow-x: auto;
+}
+
+.schedule-table {
+  min-width: 1080px;
+}
+
+.schedule-table th:first-child,
+.schedule-table td:first-child {
+  width: 42px;
+  padding-right: 0;
+}
+
+.schedule-table th:last-child,
+.schedule-table td:last-child {
+  width: 132px;
+}
+
+.schedule-table tbody tr {
+  height: 64px;
+}
+
+.schedule-table tbody tr:hover {
+  background: var(--app-hover, #171d26);
+}
+
+.schedule-task-name {
+  min-width: 220px;
+  max-width: 340px;
+}
+
+.schedule-task-name strong,
+.schedule-task-name span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.schedule-task-name strong {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.schedule-task-name span,
+.schedule-time span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.schedule-type,
+.schedule-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 24px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0 8px;
+  color: var(--app-text-secondary, #cbd4e2);
+  font-size: 11px;
+}
+
+.schedule-type svg {
+  width: 13px;
+  height: 13px;
+}
+
+.schedule-status::before {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+  content: "";
+}
+
+.schedule-status.scheduled::before { background: var(--green); }
+.schedule-status.running::before { background: var(--blue); }
+.schedule-status.warning::before,
+.schedule-status.blocked::before { background: var(--amber); }
+.schedule-status.failed::before { background: var(--red); }
+
+.schedule-time {
+  min-width: 120px;
+}
+
+.schedule-time strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.schedule-time.overdue strong {
+  color: var(--amber);
+}
+
+.schedule-row-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.schedule-row-actions .icon-button {
+  width: 30px;
+  height: 30px;
+}
+
+.schedule-row-actions .icon-button:hover,
+.schedule-row-actions .icon-button:focus-visible {
+  color: var(--app-blue, #0a84ff);
+}
+
+.schedule-row-actions .danger-action {
+  color: var(--red);
+}
+
+.schedule-footer {
+  min-height: 46px;
+  border-top: 1px solid var(--line);
+  padding: 0 14px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.schedule-modal {
+  width: min(520px, calc(100% - 24px));
+}
+
+.schedule-form-context {
+  display: grid;
+  gap: 4px;
+  margin: 16px 0;
+  border-left: 3px solid var(--blue);
+  padding: 4px 0 4px 12px;
+}
+
+.schedule-form-context strong,
+.schedule-form-context span {
+  display: block;
+}
+
+.schedule-form-context span,
+.schedule-form-context small,
+.resource-fields small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.interval-editor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 110px;
+  gap: 8px;
+}
+
+.schedule-enabled-field {
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 16px;
+}
+
+@media (max-width: 900px) {
+  .schedule-page .admin-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .schedule-page .admin-sidebar {
+    position: static;
+    height: auto;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .schedule-nav {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .schedule-nav > strong,
+  .schedule-side-links {
+    display: none;
+  }
+}
+
+@media (max-width: 680px) {
+  .schedule-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .schedule-filters,
+  .schedule-actions {
+    width: 100%;
+  }
+
+  .schedule-search {
+    flex: 1;
+  }
+
+  .schedule-search input {
+    width: 100%;
+  }
+
+  .schedule-actions {
+    justify-content: flex-end;
+  }
+
+  .schedule-nav {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>App Trading · 管理中心</title>
+    <script src="/static/core/i18n.js?v=20260901.2"></script>
+    <script src="/static/core/theme.js?v=20260721.3"></script>
+    <link rel="stylesheet" href="/static/styles/styles.css?v=20260827.1" />
+    <link rel="stylesheet" href="/static/styles/admin.css?v=20260728.2" />
+    <link rel="stylesheet" href="/static/styles/apple-polish.css?v=20260907.1" />
+    <link rel="stylesheet" href="/static/styles/theme.css?v=20260907.1" />
+    <link rel="stylesheet" href="/static/styles/admin-center.css?v=20260907.1" />
+  </head>
+  <body class="admin-page" data-admin-section="overview">
+    <div class="admin-shell">
+      <aside class="admin-sidebar"></aside>
+      <main class="admin-main">
+        <header class="admin-topbar">
+          <div><p class="eyebrow">Operations Overview</p><h1>运营概览</h1></div>
+          <div class="admin-account">
+            <span data-admin-user></span>
+            <button class="icon-button language-toggle" type="button" data-language-toggle title="Switch to English">EN</button>
+            <button class="icon-button theme-toggle" type="button" data-theme-toggle data-admin-theme title="切换主题"><i data-lucide="sun"></i></button>
+            <button class="icon-button" type="button" data-admin-logout title="退出登录"><i data-lucide="log-out"></i></button>
+          </div>
+        </header>
+        <div class="admin-page-body">
+          <div class="page-intro">
+            <div><h2>平台运行状态</h2><p id="adminOverviewTime">正在汇总管理状态</p></div>
+            <button id="refreshAdminOverview" class="icon-button" type="button" title="刷新"><i data-lucide="refresh-cw"></i></button>
+          </div>
+          <section id="adminOverviewMetrics" class="resource-metrics" aria-label="管理状态概览"></section>
+          <div id="adminOverviewNotice" class="resource-notice" role="status"></div>
+          <div class="admin-overview-attention">
+            <section class="admin-overview-panel">
+              <div class="panel-header compact"><div><h2>待处理事项</h2><p>需要管理员关注的运行异常和审批。</p></div></div>
+              <div id="adminAttentionList" class="admin-overview-list"></div>
+            </section>
+            <section class="admin-overview-panel">
+              <div class="panel-header compact"><div><h2>近期管理活动</h2><p>最近的配置与操作记录。</p></div><a class="text-button" href="/admin/resources?type=admin-audit">查看审计</a></div>
+              <div id="adminActivityList" class="admin-overview-list"></div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script src="/static/vendor/lucide.min.js"></script>
+    <script src="/static/core/admin-center.js?v=20260901.1"></script>
+    <script src="/static/admin/admin-overview.js?v=20260901.1"></script>
+  </body>
+</html>

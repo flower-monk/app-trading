@@ -1,0 +1,3152 @@
+[
+  {
+    "path": "/openapi.json",
+    "name": "openapi",
+    "kind": "Route",
+    "methods": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  {
+    "path": "/docs",
+    "name": "swagger_ui_html",
+    "kind": "Route",
+    "methods": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  {
+    "path": "/docs/oauth2-redirect",
+    "name": "swagger_ui_redirect",
+    "kind": "Route",
+    "methods": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  {
+    "path": "/redoc",
+    "name": "redoc_html",
+    "kind": "Route",
+    "methods": [
+      "GET",
+      "HEAD"
+    ]
+  },
+  {
+    "path": "/static",
+    "name": "static",
+    "kind": "Mount",
+    "methods": [
+      "MOUNT"
+    ]
+  },
+  {
+    "path": "/setup",
+    "name": "setup_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/login",
+    "name": "login_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/admin",
+    "name": "admin_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/admin/resources",
+    "name": "admin_resources_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/agents",
+    "name": "agents_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/admin/agents",
+    "name": "admin_agents_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/admin/impact-graph",
+    "name": "admin_impact_graph_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/model-management",
+    "name": "model_management_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/model-playground",
+    "name": "model_playground_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/schedules",
+    "name": "redirect_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/credentials",
+    "name": "redirect_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/data-sources",
+    "name": "redirect_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/news-sources",
+    "name": "redirect_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/admin/schedules",
+    "name": "admin_file",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/admin/credentials",
+    "name": "admin_file",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/admin/data-sources",
+    "name": "admin_file",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/admin/news-sources",
+    "name": "admin_file",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/admin/models",
+    "name": "admin_file",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/api/auth/setup-status",
+    "name": "auth_setup_status",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "SetupStatus",
+    "deprecated": false
+  },
+  {
+    "path": "/api/auth/setup",
+    "name": "auth_setup",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "AuthSessionInfo",
+    "deprecated": false
+  },
+  {
+    "path": "/api/auth/login",
+    "name": "auth_login",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "AuthSessionInfo",
+    "deprecated": false
+  },
+  {
+    "path": "/api/auth/me",
+    "name": "auth_me",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "AuthSessionInfo",
+    "deprecated": false
+  },
+  {
+    "path": "/api/auth/preferences",
+    "name": "auth_preferences",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "UserPreferences",
+    "deprecated": false
+  },
+  {
+    "path": "/api/auth/preferences",
+    "name": "patch_auth_preferences",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "UserPreferences",
+    "deprecated": false
+  },
+  {
+    "path": "/api/auth/logout",
+    "name": "auth_logout",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "dict",
+    "deprecated": false
+  },
+  {
+    "path": "/api/schedules",
+    "name": "schedules",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/schedules/{task_id}",
+    "name": "schedule_detail",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "ScheduledTask",
+    "deprecated": false
+  },
+  {
+    "path": "/api/schedules/{task_id}",
+    "name": "patch_schedule",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "ScheduledTask",
+    "deprecated": false
+  },
+  {
+    "path": "/api/schedules/bulk-status",
+    "name": "schedule_bulk_status",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "ScheduledTaskBulkResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/schedules/{task_id}/run",
+    "name": "run_schedule",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "ScheduledTaskRunResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-providers",
+    "name": "agent_providers",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-providers",
+    "name": "add_agent_provider",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "AgentProviderProfile",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-providers/{provider_id}",
+    "name": "patch_agent_provider",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "AgentProviderProfile",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-providers/{provider_id}/test",
+    "name": "test_agent_provider_connection",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "dict",
+    "deprecated": false
+  },
+  {
+    "path": "/api/credentials/status",
+    "name": "credential_status",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "CredentialVaultStatus",
+    "deprecated": false
+  },
+  {
+    "path": "/api/credentials",
+    "name": "credentials",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/credentials/{credential_id}",
+    "name": "credential_detail",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "CredentialProfile",
+    "deprecated": false
+  },
+  {
+    "path": "/api/credentials",
+    "name": "add_credential",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "CredentialProfile",
+    "deprecated": false
+  },
+  {
+    "path": "/api/credentials/{credential_id}",
+    "name": "patch_credential",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "CredentialProfile",
+    "deprecated": false
+  },
+  {
+    "path": "/api/credentials/{credential_id}/secret",
+    "name": "replace_credential_secret",
+    "kind": "APIRoute",
+    "methods": [
+      "PUT"
+    ],
+    "response_model": "CredentialProfile",
+    "deprecated": false
+  },
+  {
+    "path": "/api/credentials/{credential_id}/secret",
+    "name": "clear_credential_secret",
+    "kind": "APIRoute",
+    "methods": [
+      "DELETE"
+    ],
+    "response_model": "CredentialProfile",
+    "deprecated": false
+  },
+  {
+    "path": "/api/credentials/{credential_id}/test",
+    "name": "test_credential_connection",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "CredentialProfile",
+    "deprecated": false
+  },
+  {
+    "path": "/api/market-providers/{provider_id}/credential",
+    "name": "replace_market_provider_credential",
+    "kind": "APIRoute",
+    "methods": [
+      "PUT"
+    ],
+    "response_model": "CredentialProfile",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agents",
+    "name": "agents",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agents",
+    "name": "add_agent",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "AgentConfig",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agents/runs",
+    "name": "all_agent_runs",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agents/runs/{run_id}",
+    "name": "agent_run_detail",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "AgentRunDetail",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agents/{agent_id}",
+    "name": "agent_detail",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "AgentConfig",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agents/{agent_id}",
+    "name": "patch_agent",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "AgentConfig",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agents/{agent_id}/clone",
+    "name": "clone_agent_api",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "AgentConfig",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agents/{agent_id}/run",
+    "name": "run_agent_api",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "AgentRun",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agents/{agent_id}/test",
+    "name": "test_agent_api",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "AgentRun",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agents/{agent_id}/runs",
+    "name": "agent_run_history",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-proposals",
+    "name": "agent_proposals",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-proposals/{proposal_id}/approve",
+    "name": "approve_agent_proposal",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "AgentProposal",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-proposals/{proposal_id}/reject",
+    "name": "reject_agent_proposal",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "AgentProposal",
+    "deprecated": false
+  },
+  {
+    "path": "/api/admin/users",
+    "name": "admin_users",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/admin/users",
+    "name": "admin_create_user",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "AuthUser",
+    "deprecated": false
+  },
+  {
+    "path": "/api/admin/users/{user_id}",
+    "name": "admin_update_user",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "AuthUser",
+    "deprecated": false
+  },
+  {
+    "path": "/api/admin/users/{user_id}/reset-password",
+    "name": "admin_reset_user_password",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "dict",
+    "deprecated": false
+  },
+  {
+    "path": "/api/admin/users/{user_id}/revoke-sessions",
+    "name": "admin_revoke_user_sessions",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "dict",
+    "deprecated": false
+  },
+  {
+    "path": "/api/admin/resources",
+    "name": "admin_resources",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/admin/overview",
+    "name": "admin_overview",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "AdminOverview",
+    "deprecated": false
+  },
+  {
+    "path": "/api/admin/resources/{resource_type}",
+    "name": "admin_resource_create",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "dict",
+    "deprecated": false
+  },
+  {
+    "path": "/api/admin/resources/{resource_type}",
+    "name": "admin_resource_list",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "AdminResourcePage",
+    "deprecated": false
+  },
+  {
+    "path": "/api/admin/resources/{resource_type}/export",
+    "name": "admin_resource_export",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/api/admin/resources/{resource_type}/{resource_id}",
+    "name": "admin_resource_detail",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "dict",
+    "deprecated": false
+  },
+  {
+    "path": "/api/admin/resources/{resource_type}/{resource_id}",
+    "name": "admin_resource_edit",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "dict",
+    "deprecated": false
+  },
+  {
+    "path": "/api/admin/resources/{resource_type}/{resource_id}/status",
+    "name": "admin_resource_status",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "dict",
+    "deprecated": false
+  },
+  {
+    "path": "/api/admin/resources/{resource_type}/bulk-status",
+    "name": "admin_resource_bulk_status",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "dict",
+    "deprecated": false
+  },
+  {
+    "path": "/api/admin/resources/{resource_type}/{resource_id}/rerun",
+    "name": "admin_resource_rerun",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "dict",
+    "deprecated": false
+  },
+  {
+    "path": "/api/admin/resources/{resource_type}/{resource_id}/action/{action}",
+    "name": "admin_resource_action",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "dict",
+    "deprecated": false
+  },
+  {
+    "path": "/",
+    "name": "index",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/alerts",
+    "name": "workspace_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/backtest",
+    "name": "workspace_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/factors",
+    "name": "workspace_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/ai",
+    "name": "workspace_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/news",
+    "name": "workspace_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/watchlist",
+    "name": "workspace_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/market-tools",
+    "name": "workspace_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/market",
+    "name": "workspace_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/dashboard",
+    "name": "workspace_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/models",
+    "name": "models_workspace_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/api/stream/market",
+    "name": "market_stream",
+    "kind": "APIWebSocketRoute",
+    "methods": [
+      "WEBSOCKET"
+    ]
+  },
+  {
+    "path": "/api/health",
+    "name": "system_health",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "SystemHealth",
+    "deprecated": false
+  },
+  {
+    "path": "/api/dashboard/overview",
+    "name": "dashboard_overview",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "DashboardOverview",
+    "deprecated": false
+  },
+  {
+    "path": "/api/settings",
+    "name": "app_settings",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "AppSettings",
+    "deprecated": false
+  },
+  {
+    "path": "/api/settings",
+    "name": "patch_app_settings",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "AppSettings",
+    "deprecated": false
+  },
+  {
+    "path": "/api/export/{dataset}",
+    "name": "export_dataset",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/api/market-provider",
+    "name": "market_provider_status",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "MarketProviderStatus",
+    "deprecated": false
+  },
+  {
+    "path": "/api/market-provider/options",
+    "name": "market_provider_options",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/market-provider",
+    "name": "update_market_provider",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "MarketProviderStatus",
+    "deprecated": false
+  },
+  {
+    "path": "/api/symbols",
+    "name": "symbols",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/watchlist",
+    "name": "watchlist",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/watchlist",
+    "name": "add_watchlist_item",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "SymbolSnapshot",
+    "deprecated": false
+  },
+  {
+    "path": "/api/watchlist/{symbol}",
+    "name": "remove_watchlist_item",
+    "kind": "APIRoute",
+    "methods": [
+      "DELETE"
+    ],
+    "response_model": "dict",
+    "deprecated": true
+  },
+  {
+    "path": "/api/watchlist/groups",
+    "name": "watchlist_groups",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/watchlist/groups",
+    "name": "add_watchlist_group",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "WatchlistGroup",
+    "deprecated": false
+  },
+  {
+    "path": "/api/watchlist/groups/{group_id}",
+    "name": "patch_watchlist_group",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "WatchlistGroup",
+    "deprecated": false
+  },
+  {
+    "path": "/api/watchlist/groups/{group_id}",
+    "name": "remove_watchlist_group",
+    "kind": "APIRoute",
+    "methods": [
+      "DELETE"
+    ],
+    "response_model": "dict",
+    "deprecated": false
+  },
+  {
+    "path": "/api/watchlist/items",
+    "name": "watchlist_items",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "WatchlistResourcePage",
+    "deprecated": false
+  },
+  {
+    "path": "/api/watchlist/items",
+    "name": "add_watchlist_resource",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "WatchlistResourceItem",
+    "deprecated": false
+  },
+  {
+    "path": "/api/watchlist/items/{symbol}",
+    "name": "patch_watchlist_resource",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "WatchlistResourceItem",
+    "deprecated": false
+  },
+  {
+    "path": "/api/watchlist/items/bulk-actions",
+    "name": "watchlist_bulk_actions",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "WatchlistBulkResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/market-breadth",
+    "name": "market_breadth",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "MarketBreadth",
+    "deprecated": false
+  },
+  {
+    "path": "/api/screener",
+    "name": "screener",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "ScreenerResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-candidates",
+    "name": "strategy_candidates",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StrategyCandidateReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/screener/presets",
+    "name": "screener_presets",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/screener/preset-validations",
+    "name": "screener_preset_validations",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/filters/library-score",
+    "name": "filter_library_score",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "FilterLibraryScoreReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/filters/strategy-coverage",
+    "name": "filter_strategy_coverage",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "FilterStrategyCoverageReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/screener/presets",
+    "name": "add_screener_preset",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "ScreenerPreset",
+    "deprecated": false
+  },
+  {
+    "path": "/api/screener/presets/{preset_id}",
+    "name": "patch_screener_preset",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "ScreenerPreset",
+    "deprecated": false
+  },
+  {
+    "path": "/api/screener/presets/{preset_id}",
+    "name": "remove_screener_preset",
+    "kind": "APIRoute",
+    "methods": [
+      "DELETE"
+    ],
+    "response_model": "dict",
+    "deprecated": true
+  },
+  {
+    "path": "/api/candles/{symbol}",
+    "name": "candles",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/indicators/{symbol}",
+    "name": "indicators",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-sources",
+    "name": "list_news_sources",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/information-sources",
+    "name": "list_news_sources",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/information-sources/summary",
+    "name": "source_summary",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "InformationSourceSummary",
+    "deprecated": false
+  },
+  {
+    "path": "/api/information-sources/health",
+    "name": "source_health",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-sources",
+    "name": "create_news_source",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "NewsSource",
+    "deprecated": false
+  },
+  {
+    "path": "/api/information-sources",
+    "name": "create_news_source",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "NewsSource",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-sources/{source_id}",
+    "name": "update_news_source",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "NewsSource",
+    "deprecated": false
+  },
+  {
+    "path": "/api/information-sources/{source_id}",
+    "name": "update_news_source",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "NewsSource",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-sources/refresh",
+    "name": "refresh_all_news_sources",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/information-sources/refresh",
+    "name": "refresh_all_news_sources",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-sources/{source_id}/refresh",
+    "name": "refresh_news_source",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "NewsRefreshResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/information-sources/{source_id}/refresh",
+    "name": "refresh_news_source",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "NewsRefreshResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-sources/{source_id}/test",
+    "name": "test_news_source_connection",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "NewsSourceTestResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-sources/monitoring",
+    "name": "monitor_news_sources",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-sources/overview",
+    "name": "news_sources_overview",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "NewsSourceOverview",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-sources/{source_id}/runs",
+    "name": "news_source_runs",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news",
+    "name": "all_news_events",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "NewsFeedPage",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news/{symbol}",
+    "name": "news_events",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/market-news",
+    "name": "market_news",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-events/{news_id}",
+    "name": "news_detail",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "NewsDetail",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-events/{news_id}/impacts",
+    "name": "news_impacts",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-events/{news_id}/impacts",
+    "name": "save_news_impacts",
+    "kind": "APIRoute",
+    "methods": [
+      "PUT"
+    ],
+    "response_model": "NewsDetail",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-impact-graph/view",
+    "name": "impact_graph_view",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "NewsImpactGraphView",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-impact-graph/edges",
+    "name": "impact_graph_edges",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-impact-graph/diagnostics",
+    "name": "impact_graph_diagnostics",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "NewsImpactDiagnosticPage",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-impact-graph/edges",
+    "name": "add_impact_graph_edge",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "NewsImpactGraphEdge",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-impact-graph/edges/{edge_id}",
+    "name": "patch_impact_graph_edge",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "NewsImpactGraphEdge",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-events/{news_id}/symbols",
+    "name": "save_news_symbols",
+    "kind": "APIRoute",
+    "methods": [
+      "PUT"
+    ],
+    "response_model": "NewsDetail",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-events/{news_id}/symbols/override",
+    "name": "restore_news_symbol_detection",
+    "kind": "APIRoute",
+    "methods": [
+      "DELETE"
+    ],
+    "response_model": "NewsDetail",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-tagging/status",
+    "name": "tagging_status",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "NewsTaggingStatus",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-tagging/backfill",
+    "name": "backfill_news_tags",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "NewsTaggingBackfillResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/news-events/{news_id}/retag",
+    "name": "retag_news",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "NewsTaggingBackfillResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/alerts",
+    "name": "alerts",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/alerts",
+    "name": "create_alert",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "AlertRule",
+    "deprecated": false
+  },
+  {
+    "path": "/api/alerts/{alert_id}",
+    "name": "update_alert",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "AlertRule",
+    "deprecated": false
+  },
+  {
+    "path": "/api/alerts/{alert_id}",
+    "name": "remove_alert",
+    "kind": "APIRoute",
+    "methods": [
+      "DELETE"
+    ],
+    "response_model": "dict",
+    "deprecated": true
+  },
+  {
+    "path": "/api/alerts/evaluate",
+    "name": "evaluate_alerts",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/events",
+    "name": "events",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/automation/settings",
+    "name": "automation_settings",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "AutomationSettings",
+    "deprecated": false
+  },
+  {
+    "path": "/api/automation/settings",
+    "name": "update_automation_settings",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "AutomationSettings",
+    "deprecated": false
+  },
+  {
+    "path": "/api/automation/run",
+    "name": "automation_run",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "AutomationRunResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/automation/runs",
+    "name": "automation_runs",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/notifications/channels",
+    "name": "notification_channels",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/notifications/channels",
+    "name": "add_notification_channel",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "NotificationChannel",
+    "deprecated": false
+  },
+  {
+    "path": "/api/notifications/channels/{channel_id}",
+    "name": "patch_notification_channel",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "NotificationChannel",
+    "deprecated": false
+  },
+  {
+    "path": "/api/notifications/channels/{channel_id}",
+    "name": "remove_notification_channel",
+    "kind": "APIRoute",
+    "methods": [
+      "DELETE"
+    ],
+    "response_model": "dict",
+    "deprecated": true
+  },
+  {
+    "path": "/api/notifications/deliveries",
+    "name": "notification_deliveries",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/portfolio",
+    "name": "portfolio",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "PortfolioSummary",
+    "deprecated": false
+  },
+  {
+    "path": "/api/portfolio/risk",
+    "name": "portfolio_risk",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "PortfolioRiskReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/portfolio/positions",
+    "name": "add_portfolio_position",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "PortfolioPosition",
+    "deprecated": false
+  },
+  {
+    "path": "/api/portfolio/positions/{position_id}",
+    "name": "patch_portfolio_position",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "PortfolioPosition",
+    "deprecated": false
+  },
+  {
+    "path": "/api/portfolio/positions/{position_id}",
+    "name": "remove_portfolio_position",
+    "kind": "APIRoute",
+    "methods": [
+      "DELETE"
+    ],
+    "response_model": "dict",
+    "deprecated": true
+  },
+  {
+    "path": "/api/chart-events/{symbol}",
+    "name": "chart_events",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/ai/briefing",
+    "name": "ai_briefing",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "AiBriefing",
+    "deprecated": false
+  },
+  {
+    "path": "/api/ai/insights/{symbol}",
+    "name": "ai_insights",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/factors/{symbol}",
+    "name": "factor_ideas",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/factor-definitions",
+    "name": "factor_definitions",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/data-catalog",
+    "name": "data_catalog",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/data-quality",
+    "name": "data_quality",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "DataQualityReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/data-freshness",
+    "name": "data_freshness",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "DataFreshnessReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/market-regime",
+    "name": "market_regime",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "MarketRegime",
+    "deprecated": false
+  },
+  {
+    "path": "/api/market-regime/history",
+    "name": "market_regime_history",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/market-regime/transition",
+    "name": "market_regime_transition",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "MarketRegimeTransition",
+    "deprecated": false
+  },
+  {
+    "path": "/api/regime-scenario-risk",
+    "name": "regime_scenario_risk",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "RegimeScenarioRiskReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/research-readiness",
+    "name": "research_readiness",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "ResearchReadiness",
+    "deprecated": false
+  },
+  {
+    "path": "/api/research-coverage",
+    "name": "research_coverage",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "ResearchCoverageReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/factor-coverage",
+    "name": "factor_coverage",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "FactorCoverageReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/factor-lifecycle",
+    "name": "factor_lifecycle",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "FactorLifecycleReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/data-lineage",
+    "name": "data_lineage",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "DataLineageReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/research-run-audit",
+    "name": "research_run_audit",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "ResearchRunAuditReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/factor-coverage/backfill",
+    "name": "factor_coverage_backfill",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "FactorCoverageBackfillResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/research-coverage/backfill",
+    "name": "research_coverage_backfill",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "ResearchCoverageBackfillResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/research-action-plan",
+    "name": "research_actions",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "ResearchActionPlan",
+    "deprecated": false
+  },
+  {
+    "path": "/api/research-dashboard",
+    "name": "research_dashboard",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "ResearchDashboardSummary",
+    "deprecated": false
+  },
+  {
+    "path": "/api/research-health",
+    "name": "research_health",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "ResearchHealthReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/filters/validate",
+    "name": "filter_validation",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "FilterValidationResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/filters/contribution",
+    "name": "filter_contribution",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "FilterContributionReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/filters/admission",
+    "name": "filter_admission",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "FilterAdmissionReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/filters/stress-test",
+    "name": "filter_stress_test",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "FilterStressTestReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/filters/regime-templates",
+    "name": "filter_regime_templates",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/regime-playbook",
+    "name": "regime_playbook",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "RegimePlaybook",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-templates",
+    "name": "strategy_templates",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-templates",
+    "name": "add_strategy_template",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "StrategyTemplate",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-templates/{strategy_id}",
+    "name": "patch_strategy_template",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "StrategyTemplate",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-templates/{strategy_id}",
+    "name": "remove_strategy_template",
+    "kind": "APIRoute",
+    "methods": [
+      "DELETE"
+    ],
+    "response_model": "dict",
+    "deprecated": true
+  },
+  {
+    "path": "/api/strategy-templates/{strategy_id}/validate",
+    "name": "validate_strategy_template",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "StrategyValidationResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-promotion-gates",
+    "name": "strategy_promotion_gate_list",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-promotion-gates/{strategy_id}",
+    "name": "strategy_promotion_gate",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StrategyPromotionGate",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-validations",
+    "name": "strategy_validations",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-validation-decay",
+    "name": "strategy_validation_decay",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StrategyValidationDecayReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-risk-controls",
+    "name": "strategy_risk_controls",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StrategyRiskControlReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/market-state-controls",
+    "name": "market_state_controls",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "MarketStateControlReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-operating-plan",
+    "name": "strategy_operating_plan",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StrategyOperatingPlanReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-evidence-packs",
+    "name": "strategy_evidence_packs",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StrategyEvidencePackReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/factor-definitions",
+    "name": "add_factor_definition",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "FactorDefinition",
+    "deprecated": false
+  },
+  {
+    "path": "/api/factor-definitions/{factor_id}",
+    "name": "patch_factor_definition",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "FactorDefinition",
+    "deprecated": false
+  },
+  {
+    "path": "/api/backtest-runs",
+    "name": "create_backtest_run",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "BacktestRunResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/backtest-benchmark/{symbol}",
+    "name": "backtest_benchmark",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "BacktestBenchmarkReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/backtest-forward-consistency/{symbol}",
+    "name": "backtest_forward_consistency",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "BacktestForwardConsistencyReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/forward-tests",
+    "name": "create_forward_test",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "ForwardTestResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/forward-tests/{symbol}",
+    "name": "forward_tests",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/forward-leaderboard",
+    "name": "forward_leaderboard",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "ForwardLeaderboard",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-backtest-monitor",
+    "name": "strategy_backtest_monitor",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StrategyBacktestMonitorReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-forward-monitor",
+    "name": "strategy_forward_monitor",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StrategyForwardMonitorReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-sensitivity",
+    "name": "strategy_sensitivity",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StrategySensitivityReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-revalidation-plan",
+    "name": "strategy_revalidation_plan",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StrategyRevalidationPlanReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-validation-coverage",
+    "name": "strategy_validation_coverage",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StrategyValidationCoverageReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/walk-forward-tests",
+    "name": "create_walk_forward_test",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "WalkForwardResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/walk-forward-tests/{symbol}",
+    "name": "walk_forward_tests",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/walk-forward-leaderboard",
+    "name": "walk_forward_leaderboard",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "WalkForwardLeaderboard",
+    "deprecated": false
+  },
+  {
+    "path": "/api/stress-tests",
+    "name": "create_stress_test",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "StressTestResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/stress-tests/{symbol}",
+    "name": "stress_tests",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/stress-leaderboard",
+    "name": "stress_leaderboard",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StressLeaderboard",
+    "deprecated": false
+  },
+  {
+    "path": "/api/robustness/{symbol}",
+    "name": "robustness",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "RobustnessReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/drift/{symbol}",
+    "name": "strategy_drift",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StrategyDriftReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/allocation/{symbol}",
+    "name": "strategy_allocation",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StrategyAllocationReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/trade-readiness/{symbol}",
+    "name": "trade_readiness",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "TradeReadinessReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/regime-risk-gate/{symbol}",
+    "name": "regime_risk_gate",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "RegimeRiskGate",
+    "deprecated": false
+  },
+  {
+    "path": "/api/research-pipelines",
+    "name": "create_research_pipeline",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "ResearchPipelineResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/factor-admission",
+    "name": "create_factor_admission",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "FactorAdmissionReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/factor-admission-queue",
+    "name": "factor_admission_queue",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "FactorAdmissionQueueReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/revalidation-queue",
+    "name": "revalidation_queue",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "RevalidationQueueReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/sensitivity-tests",
+    "name": "create_sensitivity_test",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "SensitivityTestResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/parameter-optimization",
+    "name": "create_parameter_optimization",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "ParameterOptimizationReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/factor-leaderboard/{symbol}",
+    "name": "factor_leaderboard",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "FactorLeaderboard",
+    "deprecated": false
+  },
+  {
+    "path": "/api/factor-correlation/{symbol}",
+    "name": "factor_correlation",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "FactorCorrelationReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/regime-exposure",
+    "name": "regime_exposure",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "RegimeExposureReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/regime-attribution/{symbol}",
+    "name": "regime_attribution",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "RegimeAttributionReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/regime-factor-fit/{symbol}",
+    "name": "regime_factor_fit",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "RegimeFactorFitReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-leaderboard",
+    "name": "strategy_leaderboard",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StrategyLeaderboard",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-regime-fit",
+    "name": "strategy_regime_fit",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StrategyRegimeFitReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-regime-matrix",
+    "name": "strategy_regime_matrix",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StrategyRegimeMatrixReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-crowding",
+    "name": "strategy_crowding",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StrategyCrowdingReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/strategy-lifecycle",
+    "name": "strategy_lifecycle",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "StrategyLifecycleReport",
+    "deprecated": false
+  },
+  {
+    "path": "/api/backtest-runs/{symbol}",
+    "name": "list_backtest_runs",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/backtests/{symbol}",
+    "name": "backtest_summaries",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/instruments",
+    "name": "instruments",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/instruments/{instrument_id}/quote",
+    "name": "instrument_quote",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "InstrumentQuote",
+    "deprecated": false
+  },
+  {
+    "path": "/api/chart/indicators",
+    "name": "chart_indicators",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/indicator-snapshots/{instrument_id}",
+    "name": "external_indicator_snapshots",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "IndicatorSnapshotBundle",
+    "deprecated": false
+  },
+  {
+    "path": "/api/chart/query",
+    "name": "chart_query",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "ChartBundle",
+    "deprecated": false
+  },
+  {
+    "path": "/api/chart/series/query",
+    "name": "chart_series_query",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "ChartSeriesBundle",
+    "deprecated": false
+  },
+  {
+    "path": "/api/chart/layouts",
+    "name": "chart_layouts",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/chart/layouts",
+    "name": "add_chart_layout",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "ChartLayout",
+    "deprecated": false
+  },
+  {
+    "path": "/api/chart/layouts/{layout_id}",
+    "name": "patch_chart_layout",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "ChartLayout",
+    "deprecated": false
+  },
+  {
+    "path": "/api/chart/layouts/{layout_id}",
+    "name": "remove_chart_layout",
+    "kind": "APIRoute",
+    "methods": [
+      "DELETE"
+    ],
+    "response_model": "dict",
+    "deprecated": false
+  },
+  {
+    "path": "/api/stream/chart",
+    "name": "chart_stream",
+    "kind": "APIWebSocketRoute",
+    "methods": [
+      "WEBSOCKET"
+    ]
+  },
+  {
+    "path": "/api/data-sources",
+    "name": "data_sources",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/data-sources/summary",
+    "name": "data_source_summary",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "DataSourceControlSummary",
+    "deprecated": false
+  },
+  {
+    "path": "/api/data-sources/health-checks",
+    "name": "data_source_health_checks",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/data-sources/{source_id}",
+    "name": "data_source",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "DataSourceProfile",
+    "deprecated": false
+  },
+  {
+    "path": "/api/data-sources",
+    "name": "add_data_source",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "DataSourceProfile",
+    "deprecated": false
+  },
+  {
+    "path": "/api/data-sources/{source_id}",
+    "name": "patch_data_source",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "DataSourceProfile",
+    "deprecated": false
+  },
+  {
+    "path": "/api/data-sources/{source_id}/test",
+    "name": "test_data_source",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "DataSourceProfile",
+    "deprecated": false
+  },
+  {
+    "path": "/api/data-sources/{source_id}/refresh",
+    "name": "refresh_data_source",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/api/data-source-routes",
+    "name": "data_source_routes",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/data-source-routes/{market}/{capability}",
+    "name": "put_data_source_route",
+    "kind": "APIRoute",
+    "methods": [
+      "PUT"
+    ],
+    "response_model": "DataSourceRoute",
+    "deprecated": false
+  },
+  {
+    "path": "/api/data-source-config/validate",
+    "name": "validate_data_source_config",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/api/data-source-config/publish",
+    "name": "publish_data_source_config",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "DataSourceRoute",
+    "deprecated": false
+  },
+  {
+    "path": "/api/data-source-config/revisions",
+    "name": "data_source_revisions",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/data-source-config/revisions/{revision_id}/rollback",
+    "name": "rollback_data_source_revision",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "DataSourceRoute",
+    "deprecated": false
+  },
+  {
+    "path": "/api/model-provider-presets",
+    "name": "provider_presets",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/model-gateway/summary",
+    "name": "gateway_summary",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "ModelGatewaySummary",
+    "deprecated": false
+  },
+  {
+    "path": "/api/model-channels",
+    "name": "model_channels",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/model-channels",
+    "name": "add_model_channel",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "ModelChannelProfile",
+    "deprecated": false
+  },
+  {
+    "path": "/api/model-channels/{channel_id}",
+    "name": "patch_model_channel",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "ModelChannelProfile",
+    "deprecated": false
+  },
+  {
+    "path": "/api/model-channels/{channel_id}",
+    "name": "remove_model_channel",
+    "kind": "APIRoute",
+    "methods": [
+      "DELETE"
+    ],
+    "response_model": "dict",
+    "deprecated": false
+  },
+  {
+    "path": "/api/model-channels/{channel_id}/test",
+    "name": "test_channel",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "dict",
+    "deprecated": false
+  },
+  {
+    "path": "/api/model-channels/{channel_id}/sync-models",
+    "name": "sync_channel_models",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "ModelChannelProfile",
+    "deprecated": false
+  },
+  {
+    "path": "/api/model-channels/batch-status",
+    "name": "batch_channel_status",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "dict",
+    "deprecated": false
+  },
+  {
+    "path": "/api/model-routes",
+    "name": "model_routes",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/model-routes",
+    "name": "add_model_route",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "ModelRouteProfile",
+    "deprecated": false
+  },
+  {
+    "path": "/api/model-routes/{route_id}",
+    "name": "patch_model_route",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "ModelRouteProfile",
+    "deprecated": false
+  },
+  {
+    "path": "/api/model-routes/{route_id}",
+    "name": "remove_model_route",
+    "kind": "APIRoute",
+    "methods": [
+      "DELETE"
+    ],
+    "response_model": "dict",
+    "deprecated": false
+  },
+  {
+    "path": "/api/model-invocations",
+    "name": "model_invocations",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/model-playground/chat",
+    "name": "model_playground_chat",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/api/financial-calendar",
+    "name": "calendar_events",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "FinancialCalendarPage",
+    "deprecated": false
+  },
+  {
+    "path": "/api/financial-calendar/settings",
+    "name": "calendar_settings",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "FinancialCalendarSettings",
+    "deprecated": false
+  },
+  {
+    "path": "/api/financial-calendar/settings",
+    "name": "patch_calendar_settings",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "FinancialCalendarSettings",
+    "deprecated": false
+  },
+  {
+    "path": "/api/financial-calendar/refresh",
+    "name": "refresh_calendar",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "FinancialCalendarRefreshResult",
+    "deprecated": false
+  },
+  {
+    "path": "/api/financial-calendar/sources/status",
+    "name": "calendar_source_statuses",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/financial-calendar/{event_id}",
+    "name": "calendar_event_detail",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "FinancialCalendarEventDetail",
+    "deprecated": false
+  },
+  {
+    "path": "/api/financial-calendar/{event_id}/reminder",
+    "name": "put_calendar_reminder",
+    "kind": "APIRoute",
+    "methods": [
+      "PUT"
+    ],
+    "response_model": "FinancialCalendarEvent",
+    "deprecated": false
+  },
+  {
+    "path": "/api/financial-calendar/{event_id}/reminder",
+    "name": "remove_calendar_reminder",
+    "kind": "APIRoute",
+    "methods": [
+      "DELETE"
+    ],
+    "response_model": "FinancialCalendarEvent",
+    "deprecated": false
+  },
+  {
+    "path": "/api/financial-calendar/{event_id}/analyze",
+    "name": "analyze_calendar_event",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "CalendarEventAnalysis",
+    "deprecated": false
+  },
+  {
+    "path": "/api/paper/accounts",
+    "name": "paper_accounts",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/paper/accounts/{account_id}",
+    "name": "patch_account",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "PaperAccount",
+    "deprecated": false
+  },
+  {
+    "path": "/api/paper/portfolio",
+    "name": "paper_portfolio",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "PaperPortfolio",
+    "deprecated": false
+  },
+  {
+    "path": "/api/paper/orders",
+    "name": "paper_orders",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/paper/orders",
+    "name": "create_order",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "PaperOrder",
+    "deprecated": false
+  },
+  {
+    "path": "/api/paper/orders/{order_id}/cancel",
+    "name": "cancel_order",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "PaperOrder",
+    "deprecated": false
+  },
+  {
+    "path": "/api/paper/positions/{position_id}/close",
+    "name": "close_position",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "PaperOrder",
+    "deprecated": false
+  },
+  {
+    "path": "/api/paper/fills",
+    "name": "paper_fills",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/paper/cash-ledger",
+    "name": "cash_ledger",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/paper/matching/run",
+    "name": "run_matching",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "PaperMatchingResult",
+    "deprecated": false
+  }
+]

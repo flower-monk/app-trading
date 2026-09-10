@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>App Trading · 资源管理</title>
+    <script src="/static/core/i18n.js?v=20260817.3"></script>
+    <script src="/static/core/theme.js?v=20260721.3"></script>
+    <link rel="stylesheet" href="/static/styles/styles.css?v=20260721.3" />
+    <link rel="stylesheet" href="/static/styles/admin.css?v=20260728.2" />
+    <link rel="stylesheet" href="/static/styles/apple-polish.css?v=20260907.1" />
+    <link rel="stylesheet" href="/static/styles/theme.css?v=20260907.1" />
+    <link rel="stylesheet" href="/static/styles/admin-center.css?v=20260907.1" />
+  </head>
+  <body class="admin-page" data-admin-section="resources">
+    <div class="admin-shell">
+      <aside class="admin-sidebar">
+        <a class="brand admin-brand" href="/">
+          <div class="brand-mark">AT</div>
+          <div><strong>App Trading</strong><span>资源管理中心</span></div>
+        </a>
+        <nav id="resourceNav" class="resource-nav" aria-label="资源分类"></nav>
+        <a class="back-workspace secondary-link" href="/data-sources"><i data-lucide="database-zap"></i>数据源管理</a>
+        <a class="back-workspace secondary-link" href="/news-sources"><i data-lucide="rss"></i>新闻源管理</a>
+        <a class="back-workspace" href="/schedules">◷ 定时任务</a>
+        <a class="back-workspace secondary-link" href="/agents">◎ Agent 管理中心</a>
+        <a class="back-workspace secondary-link" href="/credentials"><i data-lucide="key-round"></i>凭据管理</a>
+        <a class="back-workspace" href="/">← 返回盯盘工作台</a>
+      </aside>
+      <main class="admin-main">
+        <header class="admin-topbar">
+          <div>
+            <p class="eyebrow">Platform Governance</p>
+            <h1>资源与审计</h1>
+          </div>
+          <div class="admin-account">
+            <span id="adminUserLabel"></span>
+            <button class="icon-button language-toggle" type="button" data-language-toggle title="Switch to English" aria-label="Switch to English">EN</button>
+            <button id="adminThemeToggle" class="icon-button theme-toggle" type="button" data-theme-toggle title="切换主题"><i data-lucide="sun"></i></button>
+            <button id="adminLogout" class="icon-button" type="button" title="退出登录">⇥</button>
+          </div>
+        </header>
+
+        <div class="admin-page-body resource-admin-page">
+          <div class="page-intro">
+            <div>
+              <h2 id="resourceTitle">资源总览</h2>
+              <p>查看平台治理资源、运行历史与管理审计记录。</p>
+            </div>
+          </div>
+
+          <section id="resourceMetrics" class="resource-metrics" aria-label="资源概览"></section>
+
+          <section class="admin-workbench">
+          <div class="admin-toolbar">
+            <div class="admin-search">
+              <input id="resourceSearch" type="search" placeholder="搜索当前资源" autocomplete="off" />
+              <select id="resourceTypeFilter" aria-label="资源类型" hidden>
+                <option value="">全部资源类型</option>
+                <option value="rss">RSS / Atom</option>
+                <option value="rest_api">REST API</option>
+                <option value="websocket">WebSocket</option>
+                <option value="widget">Widget</option>
+                <option value="reference">外部参考</option>
+              </select>
+              <select id="resourceStatus" aria-label="资源状态">
+                <option value="">全部状态</option>
+                <option value="true">启用</option>
+                <option value="false">停用</option>
+              </select>
+              <button id="resourceRefresh" class="icon-button" type="button" title="刷新">↻</button>
+            </div>
+            <div class="admin-actions">
+              <button id="bulkEnable" class="text-button admin-write" type="button">批量启用</button>
+              <button id="bulkDisable" class="text-button admin-write" type="button">批量停用</button>
+              <button id="createResource" class="primary-button admin-write" type="button">新建</button>
+              <button id="exportResource" class="text-button" type="button">导出 CSV</button>
+            </div>
+          </div>
+          <div id="resourceNotice" class="resource-notice" role="status"></div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead id="resourceTableHead"></thead>
+              <tbody id="resourceTableBody"></tbody>
+            </table>
+          </div>
+          <footer class="admin-pagination">
+            <span id="resourceCount">0 条</span>
+            <div>
+              <button id="previousPage" class="icon-button" type="button" title="上一页">←</button>
+              <span id="pageLabel">1 / 1</span>
+              <button id="nextPage" class="icon-button" type="button" title="下一页">→</button>
+            </div>
+          </footer>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <div id="resourceDrawer" class="drawer-backdrop" hidden>
+      <aside class="admin-drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle">
+        <div class="panel-header compact">
+          <h2 id="drawerTitle">资源详情</h2>
+          <button id="closeDrawer" class="icon-button" type="button" title="关闭">×</button>
+        </div>
+        <div id="drawerBody" class="admin-drawer-body"></div>
+      </aside>
+    </div>
+
+    <div id="resourceModal" class="modal-backdrop" hidden>
+      <form id="resourceForm" class="resource-modal" role="dialog" aria-modal="true">
+        <div class="panel-header compact">
+          <h2 id="resourceFormTitle">编辑资源</h2>
+          <button id="closeResourceModal" class="icon-button" type="button" title="关闭">×</button>
+        </div>
+        <div id="resourceFields" class="resource-fields"></div>
+        <div class="modal-actions">
+          <button id="cancelResourceModal" class="text-button" type="button">取消</button>
+          <button class="primary-button" type="submit">保存</button>
+        </div>
+      </form>
+    </div>
+    <script src="/static/vendor/lucide.min.js"></script>
+    <script src="/static/core/admin-center.js?v=20260901.1"></script>
+    <script src="/static/admin/admin.js?v=20260901.1"></script>
+  </body>
+</html>

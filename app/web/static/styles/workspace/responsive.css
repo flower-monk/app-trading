@@ -1,0 +1,186 @@
+#priceChart table {
+  width: auto;
+  min-width: 0;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+#priceChart th,
+#priceChart td {
+  height: auto;
+  padding: 0;
+  border: 0;
+  white-space: normal;
+}
+
+#priceChart tr {
+  transition: none;
+}
+
+#priceChart tbody tr:hover,
+#priceChart tbody tr.active {
+  background: transparent;
+}
+
+.up {
+  color: var(--green);
+}
+
+.down {
+  color: var(--red);
+}
+
+.flat {
+  color: var(--muted);
+}
+
+@media (max-width: 1080px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .terminal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bottom-workbench {
+    grid-template-columns: 1fr;
+  }
+
+  .bottom-workbench > .workbench-panel {
+    align-self: start;
+  }
+
+  #newsPanel:not(.news-feed-mode) {
+    display: block;
+    overflow: visible;
+  }
+
+  #newsPanel:not(.news-feed-mode) .news-timeline {
+    max-height: 360px;
+    contain: none;
+  }
+
+  #breadthWorkbenchPanel {
+    display: block;
+    overflow: visible;
+  }
+
+  #breadthWorkbenchPanel .breadth-heatmap {
+    max-height: 220px;
+    contain: none;
+  }
+
+}
+
+@media (max-width: 680px) {
+  .workspace {
+    padding: 10px;
+  }
+
+  .topbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .search-wrap {
+    min-width: 0;
+  }
+
+  .chart-footer,
+  .indicator-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .market-watch-strip .ticker-tile {
+    flex-basis: min(82vw, 248px);
+  }
+
+  .panel-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .panel-header.compact {
+    align-items: center;
+    flex-direction: row;
+  }
+
+  .professional-chart-header,
+  .chart-time-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .chart-time-group {
+    width: 100%;
+  }
+
+  .chart-time-group > :last-child {
+    flex: 1 1 auto;
+  }
+
+  .chart-command-bar {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .instrument-picker {
+    width: auto;
+    flex: 1 1 auto;
+  }
+
+  .chart-segment-scroll,
+  .chart-range-tabs {
+    width: 100%;
+  }
+
+  .professional-chart-wrap {
+    height: 620px;
+  }
+
+  .active-indicator-row {
+    grid-template-columns: minmax(100px, 1fr) 68px 38px repeat(3, 30px);
+    overflow-x: auto;
+  }
+
+  .chart-event-summary {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .chart-event-summary-meta {
+    width: calc(100% - 18px);
+    margin-left: 18px;
+  }
+
+  .news-feed-mode .news-feed-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .news-scope-control,
+  .news-feed-controls,
+  .news-source-filter,
+  .news-source-filter-button {
+    width: 100%;
+  }
+
+  .news-feed-controls { flex-wrap: wrap; margin-left: 0; }
+  .news-source-filter { flex: 1 1 100%; }
+  .news-refresh-status { flex: 1 1 auto; max-width: none; }
+  .news-scope-control button { flex: 1; }
+  .news-source-filter-menu { right: auto; left: 0; }
+  .news-sync-menu { right: 0; }
+  .news-item-heading { flex-direction: column; gap: 2px; }
+  .news-association-inline { max-width: 100%; }
+  .news-association-edit { opacity: .7; }
+}
+
+@media (hover: none) {
+  .news-association-edit { opacity: .7; }
+}

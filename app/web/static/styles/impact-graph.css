@@ -1,0 +1,147 @@
+.impact-graph-page { display: grid; align-content: start; gap: 0; padding-bottom: 24px; }
+.impact-page-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0 14px; }
+.impact-page-header h2, .impact-section-header h2 { margin: 0; font-size: 18px; }
+.impact-page-header p, .impact-section-header p { margin: 4px 0 0; color: var(--muted); font-size: 12px; }
+.impact-header-actions, .impact-view-tools { display: flex; align-items: center; gap: 6px; }
+.impact-header-actions button, .impact-view-tools button { white-space: nowrap; }
+.impact-tabs { display: flex; min-width: 0; border-bottom: 1px solid var(--line); }
+.impact-tab { position: relative; display: inline-flex; align-items: center; gap: 7px; min-height: 42px; padding: 0 14px; border: 0; border-radius: 0; background: transparent; color: var(--muted); font-size: 12px; font-weight: 600; }
+.impact-tab::after { content: ""; position: absolute; right: 12px; bottom: -1px; left: 12px; height: 2px; background: transparent; }
+.impact-tab:hover { color: var(--text); background: color-mix(in srgb, var(--text) 4%, transparent); }
+.impact-tab.is-active { color: #2563eb; }
+.impact-tab.is-active::after { background: #2563eb; }
+.impact-tab svg { width: 15px; height: 15px; }
+.impact-tab span { min-width: 21px; padding: 1px 5px; border: 1px solid var(--line); border-radius: 10px; color: var(--muted); font-size: 10px; font-variant-numeric: tabular-nums; text-align: center; }
+.impact-tab.is-active span { border-color: color-mix(in srgb, #2563eb 35%, var(--line)); color: #2563eb; background: color-mix(in srgb, #2563eb 8%, transparent); }
+.impact-workspace { min-width: 0; }
+.impact-workspace[hidden] { display: none; }
+.impact-commandbar { display: grid; grid-template-columns: minmax(220px, 1fr) 160px 140px 150px minmax(0, auto) auto; align-items: center; gap: 8px; padding: 12px 0; }
+.impact-search { position: relative; display: block; min-width: 0; }
+.impact-search svg { position: absolute; top: 50%; left: 10px; width: 15px; height: 15px; color: var(--muted); transform: translateY(-50%); pointer-events: none; }
+.impact-search input { width: 100%; padding-left: 32px; }
+.impact-focus-trail { display: inline-flex; min-width: 0; align-items: center; gap: 4px; justify-self: start; padding: 3px 4px 3px 9px; border: 1px solid color-mix(in srgb, #2563eb 35%, var(--line)); border-radius: 4px; background: color-mix(in srgb, #2563eb 7%, var(--panel)); color: #2563eb; font-size: 11px; }
+.impact-focus-trail[hidden] { display: none; }
+.impact-focus-trail span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.impact-focus-trail button { display: grid; width: 24px; height: 24px; place-items: center; border: 0; background: transparent; color: inherit; }
+.impact-focus-trail svg { width: 13px; height: 13px; }
+.impact-view-tools { justify-self: end; padding-left: 7px; border-left: 1px solid var(--line); }
+.impact-view-tools .icon-button { width: 32px; height: 32px; }
+.impact-summary { display: flex; align-items: center; gap: 20px; min-height: 34px; border-top: 1px solid var(--line); color: var(--muted); font-size: 11px; }
+.impact-summary b { margin-right: 4px; color: var(--text); font-size: 12px; font-variant-numeric: tabular-nums; }
+.impact-explorer { display: grid; grid-template-columns: 190px minmax(0, 1fr) 300px; min-height: 580px; height: min(680px, calc(100vh - 290px)); border: 1px solid var(--line); background: var(--panel); overflow: hidden; }
+.impact-explorer:fullscreen { width: 100vw; height: 100vh; border: 0; }
+.impact-facets, .impact-network-detail { min-width: 0; padding: 15px 13px; overflow: auto; background: color-mix(in srgb, var(--panel) 97%, var(--text) 3%); }
+.impact-facets { border-right: 1px solid var(--line); }
+.impact-network-detail { border-left: 1px solid var(--line); }
+.impact-aside-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 9px; font-size: 11px; }
+.impact-node-legend { display: grid; gap: 3px; }
+.impact-node-filter { display: grid; grid-template-columns: 9px minmax(0, 1fr) auto; align-items: center; gap: 8px; width: 100%; min-height: 30px; padding: 3px 6px; border: 0; border-radius: 4px; background: transparent; color: var(--muted); font-size: 11px; text-align: left; }
+.impact-node-filter:hover, .impact-node-filter.is-active { background: color-mix(in srgb, var(--text) 6%, transparent); color: var(--text); }
+.impact-node-filter i { width: 8px; height: 8px; border-radius: 50%; background: var(--node-color); }
+.impact-node-filter b { font-size: 10px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.impact-direction-legend { display: grid; gap: 9px; margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; }
+.impact-direction-legend strong { margin-bottom: 2px; color: var(--text); font-size: 11px; }
+.impact-direction-legend span::before { content: ""; display: inline-block; width: 20px; margin-right: 7px; border-top: 2px solid #16a34a; vertical-align: middle; }
+.impact-direction-legend .negative::before { border-color: #dc2626; }
+.impact-direction-legend .uncertain::before { border-color: #64748b; }
+.impact-direction-legend .pending::before { border-color: #d97706; border-top-style: dashed; }
+.impact-network-stage { position: relative; min-width: 0; min-height: 0; background-color: var(--panel); background-image: radial-gradient(color-mix(in srgb, var(--muted) 20%, transparent) .65px, transparent .65px); background-size: 18px 18px; }
+#impactNetwork { position: absolute; inset: 0; }
+.impact-network-empty, .impact-section-empty { display: grid; place-content: center; justify-items: center; gap: 7px; color: var(--muted); text-align: center; }
+.impact-network-empty { position: absolute; inset: 0; pointer-events: none; }
+.impact-network-empty[hidden], .impact-section-empty[hidden], .impact-network-loading[hidden] { display: none; }
+.impact-network-empty svg, .impact-section-empty svg { width: 28px; height: 28px; margin-bottom: 3px; }
+.impact-network-empty strong, .impact-section-empty strong { color: var(--text); font-size: 13px; }
+.impact-network-empty span, .impact-section-empty span { font-size: 11px; }
+.impact-network-loading { position: absolute; top: 12px; left: 50%; display: inline-flex; align-items: center; gap: 7px; padding: 6px 9px; border: 1px solid var(--line); border-radius: 4px; background: var(--panel); color: var(--muted); font-size: 10px; transform: translateX(-50%); box-shadow: 0 4px 16px rgb(0 0 0 / 8%); }
+.impact-network-loading span { width: 10px; height: 10px; border: 2px solid var(--line); border-top-color: #2563eb; border-radius: 50%; animation: impact-spin .8s linear infinite; }
+@keyframes impact-spin { to { transform: rotate(360deg); } }
+.impact-detail-empty { display: grid; justify-items: start; gap: 7px; padding-top: 8px; }
+.impact-detail-empty svg { width: 22px; height: 22px; color: var(--muted); }
+.impact-detail-empty strong, .impact-detail-title strong { color: var(--text); font-size: 13px; }
+.impact-detail-empty p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.6; }
+.impact-detail-title { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: start; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+.impact-detail-title small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; overflow-wrap: anywhere; }
+.impact-direction-badge, .impact-status-badge, .impact-reason-badge { display: inline-flex; align-items: center; width: fit-content; border: 1px solid var(--line); border-radius: 3px; padding: 2px 6px; font-size: 10px; white-space: nowrap; }
+.impact-direction-badge.positive { color: #15803d; border-color: color-mix(in srgb, #16a34a 35%, var(--line)); background: color-mix(in srgb, #16a34a 8%, transparent); }
+.impact-direction-badge.negative { color: #dc2626; border-color: color-mix(in srgb, #dc2626 35%, var(--line)); background: color-mix(in srgb, #dc2626 8%, transparent); }
+.impact-direction-badge.mixed, .impact-direction-badge.uncertain, .impact-direction-badge.neutral { color: var(--muted); }
+.impact-detail-grid { display: grid; gap: 0; }
+.impact-detail-grid > div { display: grid; gap: 4px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.impact-detail-grid span { color: var(--muted); font-size: 10px; }
+.impact-detail-grid b { color: var(--text); font-size: 11px; font-weight: 500; line-height: 1.55; overflow-wrap: anywhere; }
+.impact-detail-path { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.impact-detail-path i { color: var(--muted); font-style: normal; }
+.impact-detail-actions { display: flex; gap: 7px; padding-top: 14px; }
+.impact-detail-actions button { flex: 1; }
+.impact-section-header { display: flex; align-items: center; justify-content: space-between; padding: 20px 0 13px; border-bottom: 1px solid var(--line); }
+.impact-proposal-list, .impact-diagnostic-list { display: grid; }
+.impact-proposal-item { display: grid; grid-template-columns: minmax(0, 1fr) 120px 100px 160px; gap: 16px; align-items: center; min-height: 72px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.impact-proposal-item:hover, .impact-diagnostic-item:hover { background: color-mix(in srgb, var(--text) 3%, transparent); }
+.impact-proposal-main { display: grid; gap: 4px; min-width: 0; }
+.impact-proposal-main strong { font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.impact-proposal-main span, .impact-proposal-metric span { color: var(--muted); font-size: 10px; }
+.impact-proposal-metric { display: grid; gap: 4px; }
+.impact-proposal-metric b { font-size: 11px; font-weight: 500; }
+.impact-proposal-actions { display: flex; justify-content: flex-end; gap: 6px; }
+.impact-proposal-actions button { min-width: 0; }
+.impact-section-empty { min-height: 300px; }
+.impact-diagnostic-toolbar { display: grid; grid-template-columns: minmax(220px, 1fr) 210px; gap: 8px; padding: 12px 0; }
+.impact-diagnostic-facets { display: flex; flex-wrap: wrap; gap: 6px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+.impact-diagnostic-facet { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 3px 8px; border: 1px solid var(--line); border-radius: 4px; background: transparent; color: var(--muted); font-size: 10px; }
+.impact-diagnostic-facet:hover, .impact-diagnostic-facet.is-active { border-color: color-mix(in srgb, #d97706 45%, var(--line)); background: color-mix(in srgb, #d97706 8%, transparent); color: var(--text); }
+.impact-diagnostic-facet b { font-size: 10px; font-variant-numeric: tabular-nums; }
+.impact-diagnostic-item { display: grid; grid-template-columns: minmax(240px, 1fr) minmax(180px, .7fr) 150px; gap: 18px; align-items: start; padding: 13px 12px; border-bottom: 1px solid var(--line); }
+.impact-diagnostic-main, .impact-diagnostic-reasons { display: grid; gap: 6px; min-width: 0; }
+.impact-diagnostic-main strong { font-size: 12px; }
+.impact-diagnostic-main span, .impact-diagnostic-item time { color: var(--muted); font-size: 10px; line-height: 1.45; overflow-wrap: anywhere; }
+.impact-diagnostic-reasons { justify-items: start; }
+.impact-reason-badge { color: #b45309; border-color: color-mix(in srgb, #d97706 35%, var(--line)); background: color-mix(in srgb, #d97706 7%, transparent); white-space: normal; }
+.impact-pagination { display: flex; align-items: center; justify-content: space-between; min-height: 48px; color: var(--muted); font-size: 11px; }
+.impact-pagination > div { display: flex; gap: 5px; }
+#impactEdgeDialog { width: min(760px, calc(100vw - 28px)); border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--text); padding: 0; }
+#impactEdgeDialog::backdrop { background: rgb(0 0 0 / 58%); }
+#impactEdgeForm header, #impactEdgeForm footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+#impactEdgeForm header h2 { margin: 0; font-size: 16px; }
+#impactEdgeForm header p { margin: 3px 0 0; color: var(--muted); font-size: 11px; }
+#impactEdgeForm footer { justify-content: flex-end; border-top: 1px solid var(--line); border-bottom: 0; }
+.impact-edge-fields { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; padding: 18px; }
+.impact-edge-fields label { display: grid; gap: 5px; color: var(--muted); font-size: 11px; }
+.impact-edge-fields .wide { grid-column: 1 / -1; }
+
+@media (max-width: 1180px) {
+  .impact-commandbar { grid-template-columns: minmax(220px, 1fr) repeat(3, 135px); }
+  .impact-focus-trail { grid-column: 1 / -2; grid-row: 2; }
+  .impact-view-tools { grid-column: -2; grid-row: 2; }
+  .impact-explorer { grid-template-columns: 160px minmax(0, 1fr) 260px; }
+}
+@media (max-width: 900px) {
+  .impact-explorer { height: auto; grid-template-columns: 150px minmax(0, 1fr); grid-template-rows: 500px auto; }
+  .impact-network-detail { grid-column: 1 / -1; min-height: 180px; border-top: 1px solid var(--line); border-left: 0; }
+  .impact-proposal-item { grid-template-columns: minmax(0, 1fr) 100px 140px; }
+  .impact-proposal-item .impact-proposal-metric:nth-of-type(2) { display: none; }
+}
+@media (max-width: 700px) {
+  .admin-center-topbar .eyebrow { display: none; }
+  .admin-center-topbar h1 { margin: 0; font-size: 20px; white-space: nowrap; }
+  .impact-page-header { align-items: flex-start; }
+  .impact-page-header > div:first-child p, #backfillImpactGraph { display: none; }
+  .impact-tabs { overflow-x: auto; }
+  .impact-tab { flex: 0 0 auto; }
+  .impact-commandbar { grid-template-columns: 1fr 1fr; }
+  .impact-search { grid-column: 1 / -1; }
+  #impactNodeTypeFilter, #impactDirectionFilter { min-width: 0; }
+  .impact-focus-trail { grid-column: 1 / -1; grid-row: auto; }
+  .impact-view-tools { grid-column: 1 / -1; grid-row: auto; justify-self: start; border-left: 0; padding-left: 0; }
+  .impact-summary { gap: 12px; }
+  .impact-explorer { grid-template-columns: 1fr; grid-template-rows: auto 430px auto; }
+  .impact-facets { border-right: 0; border-bottom: 1px solid var(--line); }
+  .impact-node-legend { display: flex; overflow-x: auto; }
+  .impact-node-filter { grid-template-columns: 8px auto auto; width: auto; white-space: nowrap; }
+  .impact-direction-legend { display: none; }
+  .impact-network-detail { grid-column: auto; }
+  .impact-proposal-item, .impact-diagnostic-item { grid-template-columns: 1fr; gap: 8px; }
+  .impact-proposal-actions { justify-content: flex-start; }
+  .impact-diagnostic-toolbar, .impact-edge-fields { grid-template-columns: 1fr; }
+  .impact-edge-fields .wide { grid-column: auto; }
+}
