@@ -208,6 +208,39 @@ def _attach_news_markers(bundle: ChartBundle, news_mode: ChartNewsMode = "key") 
                 events=previews,
             )
         )
+    from app.modules.ai.workflow import list_investment_artifacts
+
+    for artifact in list_investment_artifacts(symbol=bundle.instrument.symbol, active_only=True, limit=100):
+        if artifact.artifact_type not in {"chart_marker", "risk_signal"}:
+            continue
+        mapping = _event_candle_mapping(candle_times, _event_timestamp(artifact.valid_from), bundle.interval)
+        if mapping is None:
+            continue
+        index, reason = mapping
+        sentiment = {
+            "positive": "bullish", "negative": "bearish", "mixed": "mixed", "neutral": "neutral",
+        }[artifact.direction]
+        preview = ChartEventPreview(
+            id=artifact.id, title=artifact.title, summary=artifact.summary,
+            source=f"Agent Studio · v{artifact.workflow_version}", published_at=artifact.valid_from,
+            event_type="flow", sentiment=sentiment, impact_score=round(artifact.confidence * 100),
+            price_reaction="等待市场验证", mapping_reason=reason, origin="agent_workflow",
+            trace_id=artifact.trace_id, workflow_id=artifact.workflow_id,
+            workflow_version=artifact.workflow_version, run_id=artifact.run_id,
+        )
+        existing = next((item for item in markers if item.time == candle_times[index]), None)
+        if existing:
+            existing.events.append(preview)
+            existing.count += 1
+            if preview.impact_score >= existing.impact_score:
+                existing.title = preview.title
+                existing.impact_score = preview.impact_score
+        else:
+            markers.append(ChartEventMarker(
+                id=f"agent:{artifact.id}", time=candle_times[index], candle_time=candle_times[index],
+                title=artifact.title, sentiment=sentiment, aggregate_sentiment=sentiment,
+                impact_score=preview.impact_score, count=1, mapping_reason=reason, events=[preview],
+            ))
     bundle.markers = sorted(markers, key=lambda item: item.time)
     return bundle
 

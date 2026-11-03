@@ -3,6 +3,7 @@ from __future__ import annotations
 from fastapi import FastAPI
 
 from app.api.routes.auth_admin import router as auth_admin_router
+from app.api.routes.agent_studio import router as agent_studio_router
 from app.api.routes.charting import router as charting_router
 from app.api.routes.data_sources import router as data_sources_router
 from app.api.routes.financial_calendar import router as financial_calendar_router
@@ -20,6 +21,7 @@ from app.web.router import router as web_router
 
 ROUTERS = (
     auth_admin_router,
+    agent_studio_router,
     market_news_router,
     trading_ops_router,
     quant_research_router,

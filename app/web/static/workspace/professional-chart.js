@@ -559,6 +559,7 @@
       <button class="text-button" type="button" data-chart-news-details="${esc(marker.id)}">
         ${esc(marker.count > 1 ? t("查看全部 {count} 条", { count: marker.count }) : t("查看详情"))}
       </button>
+      ${primary.trace_id ? `<a class="text-button" href="/admin/agent-studio?run=${esc(primary.run_id)}">${esc(t("查看 Agent 调用链"))}</a>` : ""}
     `;
   }
 

@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>App Trading · Agent Studio</title>
+    <script src="/static/core/i18n.js?v=20260901.1"></script>
+    <script src="/static/core/theme.js?v=20260721.3"></script>
+    <link rel="stylesheet" href="/static/styles/styles.css?v=20260910.1" />
+    <link rel="stylesheet" href="/static/styles/admin.css?v=20260721.3" />
+    <link rel="stylesheet" href="/static/styles/apple-polish.css?v=20260907.1" />
+    <link rel="stylesheet" href="/static/styles/theme.css?v=20260907.1" />
+    <link rel="stylesheet" href="/static/styles/admin-center.css?v=20260907.1" />
+    <link rel="stylesheet" href="/static/styles/agent-studio.css?v=20260910.1" />
+  </head>
+  <body class="admin-page" data-admin-section="agent-studio">
+    <div class="admin-shell">
+      <aside class="admin-sidebar"></aside>
+      <main class="admin-main studio-main">
+        <header class="admin-topbar">
+          <div><p class="eyebrow">Agent Control Plane</p><h1>Agent Studio</h1></div>
+          <div class="studio-account"><span data-admin-user></span><button class="icon-button language-toggle" type="button" data-language-toggle title="Switch to English">EN</button><button class="icon-button" type="button" data-admin-theme title="切换主题"><i data-lucide="sun"></i></button><button class="icon-button" type="button" data-admin-logout title="退出"><i data-lucide="log-out"></i></button></div>
+        </header>
+        <nav class="studio-tabs" aria-label="Agent Studio 视图">
+          <button class="active" data-view="design"><i data-lucide="workflow"></i>工作流设计</button>
+          <button data-view="runs"><i data-lucide="activity"></i>运行与调用链</button>
+          <button data-view="approvals"><i data-lucide="badge-check"></i>审批中断</button>
+          <button data-view="tools"><i data-lucide="wrench"></i>工具目录</button>
+          <a href="/admin/agents"><i data-lucide="bot"></i>能力 Agent</a>
+        </nav>
+        <div id="studioNotice" class="resource-notice" role="status"></div>
+
+        <section class="studio-view active" data-panel="design">
+          <div class="studio-layout">
+            <aside class="workflow-panel">
+              <div class="studio-panel-head"><div><strong>工作流</strong><span>草稿与发布版本</span></div><button id="newWorkflow" class="icon-button" title="新建"><i data-lucide="plus"></i></button></div>
+              <input id="workflowSearch" type="search" placeholder="搜索工作流" />
+              <div id="workflowList" class="workflow-list"></div>
+            </aside>
+            <section class="workflow-canvas-panel">
+              <div class="workflow-toolbar">
+                <div><strong id="workflowTitle">选择工作流</strong><span id="workflowMeta"></span></div>
+                <div class="workflow-actions"><button id="autoLayout" class="icon-button" title="自动布局"><i data-lucide="layout-dashboard"></i></button><button id="connectNodes" class="text-button">连接节点</button><button id="validateWorkflow" class="text-button">校验</button><button id="testWorkflow" class="text-button">测试</button><button id="publishWorkflow" class="primary-button">发布</button></div>
+              </div>
+              <div id="workflowSummary" class="workflow-summary"></div>
+              <div class="node-palette" id="nodePalette">
+                <button data-add-kind="resource" data-add-type="market.indicators"><i data-lucide="candlestick-chart"></i>行情指标</button>
+                <button data-add-kind="resource" data-add-type="news.search"><i data-lucide="newspaper"></i>关联新闻</button>
+                <button data-add-kind="agent" data-add-type="agent.invoke"><i data-lucide="bot"></i>能力 Agent</button>
+                <button data-add-kind="condition" data-add-type="condition"><i data-lucide="split"></i>条件</button>
+                <button data-add-kind="approval" data-add-type="approval"><i data-lucide="circle-pause"></i>审批</button>
+                <button data-add-kind="output" data-add-type="chart_marker"><i data-lucide="map-pin"></i>K线标记</button>
+                <button data-add-kind="output" data-add-type="risk_signal"><i data-lucide="shield-alert"></i>风险提示</button>
+              </div>
+              <div id="workflowCanvas" class="workflow-canvas"><div class="canvas-empty">选择或新建一个工作流</div></div>
+            </section>
+            <aside class="inspector-panel">
+              <div class="studio-panel-head"><div><strong>节点检查器</strong><span>目的、输入与执行边界</span></div></div>
+              <div id="nodeInspector" class="inspector-empty">选择画布中的节点</div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="studio-view" data-panel="runs"><div class="section-toolbar"><div><h2>运行与调用链</h2><p>每个模型、工具、条件和输出都是可追踪节点。</p></div><button id="refreshRuns" class="icon-button" title="刷新"><i data-lucide="refresh-cw"></i></button></div><div id="workflowRuns" class="ops-table"></div></section>
+        <section class="studio-view" data-panel="approvals"><div class="section-toolbar"><div><h2>审批中断</h2><p>批准后从持久化检查点继续执行，而不是重新开始。</p></div></div><div id="workflowApprovals" class="approval-grid"></div></section>
+        <section class="studio-view" data-panel="tools"><div class="section-toolbar"><div><h2>受控工具目录</h2><p>Agent 只能访问明确授权、具备结构化契约的工具。</p></div></div><div id="toolCatalog" class="tool-grid"></div></section>
+      </main>
+    </div>
+
+    <div id="workflowModal" class="modal-backdrop" hidden><form id="workflowForm" class="resource-modal"><div class="panel-header compact"><h2>新建工作流</h2><button type="button" class="icon-button" data-close-workflow><i data-lucide="x"></i></button></div><div class="resource-fields"><label><span>名称</span><input id="newWorkflowName" required maxlength="120" /></label><label><span>目标</span><textarea id="newWorkflowObjective" rows="3" maxlength="1000"></textarea></label><label><span>起始模板</span><select id="newWorkflowTemplate"><option value="risk_watch">风险监控</option><option value="news_impact">新闻影响分析</option><option value="blank">空白画布</option></select></label></div><div class="modal-actions"><button type="button" class="text-button" data-close-workflow>取消</button><button class="primary-button">创建</button></div></form></div>
+    <div id="traceDrawer" class="drawer-backdrop" hidden><aside class="admin-drawer trace-drawer"><div class="panel-header compact"><div><h2>运行调用链</h2><p id="traceMeta"></p></div><button id="closeTrace" class="icon-button"><i data-lucide="x"></i></button></div><div class="trace-canvas" id="traceCanvas"></div><div id="traceTimeline" class="trace-timeline"></div></aside></div>
+    <script src="/static/vendor/lucide.min.js"></script>
+    <script src="/static/vendor/cytoscape.min.js"></script>
+    <script src="/static/vendor/dagre.min.js"></script>
+    <script src="/static/vendor/cytoscape-dagre.js"></script>
+    <script src="/static/core/admin-center.js?v=20260910.1"></script>
+    <script src="/static/admin/agent-studio.js?v=20260910.1"></script>
+  </body>
+</html>

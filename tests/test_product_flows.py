@@ -2746,7 +2746,27 @@ def test_agent_registry_custom_instances_and_scheduling(isolated_app_db):
 
 def test_unified_schedule_management(isolated_app_db):
     tasks = main.list_scheduled_tasks()
-    assert {item.task_type for item in tasks} == {"automation", "news_source", "data_source", "model_gateway", "agent"}
+    assert {item.task_type for item in tasks} == {"automation", "news_source", "data_source", "model_gateway", "agent", "maintenance"}
+
+    retention = main.get_scheduled_task("maintenance:agent-data-retention")
+    retention = main.update_scheduled_task(
+        retention.id,
+        main.ScheduledTaskUpdate(
+            enabled=True,
+            interval_seconds=43200,
+            checkpoint_retention_days=7,
+            trace_retention_days=60,
+            artifact_retention_days=120,
+            vacuum_after_cleanup=False,
+        ),
+    )
+    assert retention.interval_seconds == 43200
+    assert retention.configuration == {
+        "checkpoint_retention_days": 7,
+        "trace_retention_days": 60,
+        "artifact_retention_days": 120,
+        "vacuum_after_cleanup": False,
+    }
 
     health = main.get_scheduled_task("data_source:health-check")
     health = main.update_scheduled_task(
@@ -2884,6 +2904,26 @@ def test_model_channel_route_executes_and_records_sanitized_metrics(isolated_app
     assert invocation.completion_tokens == 7
     assert "route-secret-value" not in invocation.model_dump_json()
     assert main.get_model_channel(channel.id).health_status == "healthy"
+
+
+def test_model_channel_can_save_large_upstream_catalog(isolated_app_db):
+    models = [f"vendor/model-{index}" for index in range(222)]
+    channel = main.create_model_channel(main.ModelChannelCreate(
+        name="Large Catalog",
+        provider_type="ollama",
+        base_url="http://localhost:11434/v1",
+        api_key_env="",
+        models=models,
+    ))
+    assert len(channel.models) == 222
+
+    updated = main.update_model_channel(channel.id, main.ModelChannelUpdate(
+        name="Large Catalog Updated",
+        models=channel.models,
+    ))
+    assert updated.name == "Large Catalog Updated"
+    assert len(updated.models) == len(models)
+    assert set(updated.models) == set(models)
 
 
 def test_agent_uses_logical_model_route(isolated_app_db, monkeypatch):

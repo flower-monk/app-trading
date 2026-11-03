@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>App Trading · 调度中心</title>
-    <script src="/static/core/i18n.js?v=20260817.3"></script>
+    <script src="/static/core/i18n.js?v=20260911.1"></script>
     <script src="/static/core/theme.js?v=20260721.3"></script>
     <link rel="stylesheet" href="/static/styles/styles.css?v=20260722.1" />
     <link rel="stylesheet" href="/static/styles/admin.css?v=20260721.3" />
@@ -36,6 +36,9 @@
           </button>
           <button type="button" data-schedule-type="agent">
             <i data-lucide="bot"></i><span>Agent 调度</span><b id="agentTaskCount">0</b>
+          </button>
+          <button type="button" data-schedule-type="maintenance">
+            <i data-lucide="database-backup"></i><span>数据维护</span><b id="maintenanceTaskCount">0</b>
           </button>
         </nav>
         <div class="schedule-side-links">
@@ -136,6 +139,24 @@
             <small id="scheduleIntervalHint"></small>
           </label>
         </div>
+        <div id="retentionFields" class="resource-fields" hidden>
+          <label>
+            <span>Checkpoint 保留天数</span>
+            <input id="checkpointRetentionDays" type="number" min="1" max="3650" />
+          </label>
+          <label>
+            <span>运行轨迹保留天数</span>
+            <input id="traceRetentionDays" type="number" min="1" max="3650" />
+          </label>
+          <label>
+            <span>投资产物保留天数</span>
+            <input id="artifactRetentionDays" type="number" min="1" max="3650" />
+          </label>
+          <label class="schedule-enabled-field">
+            <span>磁盘空间整理</span>
+            <span class="toggle-line"><input id="vacuumAfterCleanup" type="checkbox" />清理后执行 SQLite VACUUM</span>
+          </label>
+        </div>
         <div class="modal-actions">
           <button id="cancelScheduleModal" class="text-button" type="button">取消</button>
           <button class="primary-button admin-write" type="submit">保存</button>
@@ -145,6 +166,6 @@
 
     <script src="/static/vendor/lucide.min.js"></script>
     <script src="/static/core/admin-center.js?v=20260901.1"></script>
-    <script src="/static/admin/schedules.js?v=20260901.1"></script>
+    <script src="/static/admin/schedules.js?v=20260911.1"></script>
   </body>
 </html>

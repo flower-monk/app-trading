@@ -56,6 +56,11 @@ def admin_agents_page(request: Request) -> FileResponse:
     return _admin_file(request, "agents.html")
 
 
+@router.get("/admin/agent-studio")
+def admin_agent_studio_page(request: Request) -> FileResponse:
+    return _admin_file(request, "agent-studio.html")
+
+
 @router.get("/admin/impact-graph")
 def admin_impact_graph_page(request: Request) -> FileResponse:
     return _admin_file(request, "impact-graph.html")

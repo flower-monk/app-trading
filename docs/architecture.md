@@ -38,6 +38,19 @@ to `bootstrap/application.py`; startup and shutdown behavior belongs to
 | `calendar` | Economic and earnings calendar aggregation |
 | `operations` | Health, dashboard summaries, schedules, background execution |
 
+## Agent Workflow Control Plane
+
+`app.modules.ai.workflow` owns versioned workflow definitions, the controlled
+tool registry, LangGraph compilation, durable checkpoints, execution traces,
+approval interrupts, and investment artifacts. Capability Agents remain in
+`app.modules.ai.service`; a workflow invokes them through an explicit Agent
+node and records the child run against the workflow trace and parent span.
+
+Workflow dependencies are one-way: triggers and read tools gather domain data,
+Agent nodes produce structured analysis, conditions route on explicit fields,
+and output nodes create typed investment artifacts. No workflow node may call
+an arbitrary URL, SQL statement, credential API, or trading operation.
+
 The research domain is further split by responsibility:
 
 - `catalog.py`: quality, freshness, lineage, coverage, and exports.

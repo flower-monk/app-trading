@@ -104,6 +104,16 @@
     "deprecated": false
   },
   {
+    "path": "/admin/agent-studio",
+    "name": "admin_agent_studio_page",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
     "path": "/admin/impact-graph",
     "name": "admin_impact_graph_page",
     "kind": "APIRoute",
@@ -761,6 +771,196 @@
       "POST"
     ],
     "response_model": "dict",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-studio/tools",
+    "name": "workflow_tools",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-studio/workflows",
+    "name": "workflows",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-studio/workflows",
+    "name": "add_workflow",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "WorkflowDefinition",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-studio/workflows/{workflow_id}",
+    "name": "workflow_detail",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "WorkflowDefinition",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-studio/workflows/{workflow_id}",
+    "name": "patch_workflow",
+    "kind": "APIRoute",
+    "methods": [
+      "PATCH"
+    ],
+    "response_model": "WorkflowDefinition",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-studio/workflows/{workflow_id}/validate",
+    "name": "validate_workflow_api",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "WorkflowValidation",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-studio/workflows/{workflow_id}/publish",
+    "name": "publish_workflow_api",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "WorkflowDefinition",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-studio/workflows/{workflow_id}/versions",
+    "name": "workflow_versions",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-studio/workflows/{workflow_id}/rollback",
+    "name": "rollback_workflow_api",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "WorkflowDefinition",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-studio/workflows/{workflow_id}/run",
+    "name": "run_workflow",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "WorkflowRun",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-studio/workflows/{workflow_id}/test",
+    "name": "test_workflow",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "WorkflowRun",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-studio/runs",
+    "name": "workflow_runs",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-studio/runs/{run_id}",
+    "name": "workflow_run",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "WorkflowRun",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-studio/runs/{run_id}/trace",
+    "name": "workflow_trace",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "WorkflowTrace",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-studio/runs/{run_id}/stream",
+    "name": "workflow_run_stream",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": null,
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-studio/approvals",
+    "name": "workflow_approvals",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-studio/approvals/{approval_id}/approve",
+    "name": "approve_workflow",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "WorkflowRun",
+    "deprecated": false
+  },
+  {
+    "path": "/api/agent-studio/approvals/{approval_id}/reject",
+    "name": "reject_workflow",
+    "kind": "APIRoute",
+    "methods": [
+      "POST"
+    ],
+    "response_model": "WorkflowRun",
+    "deprecated": false
+  },
+  {
+    "path": "/api/investment-artifacts",
+    "name": "investment_artifacts",
+    "kind": "APIRoute",
+    "methods": [
+      "GET"
+    ],
+    "response_model": "list",
     "deprecated": false
   },
   {

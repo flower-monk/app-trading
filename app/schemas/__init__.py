@@ -9,3 +9,4 @@ from app.schemas.data_sources import *
 from app.schemas.model_gateway import *
 from app.schemas.financial_calendar import *
 from app.schemas.paper_trading import *
+from app.schemas.workflows import *

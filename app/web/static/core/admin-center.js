@@ -9,7 +9,8 @@
       { id: "credentials", label: "凭据", href: "/admin/credentials", icon: "key-round" },
     ] },
     { label: "智能自动化", items: [
-      { id: "agents", label: "Agent", href: "/admin/agents", icon: "workflow" },
+      { id: "agent-studio", label: "Agent Studio", href: "/admin/agent-studio", icon: "workflow" },
+      { id: "agents", label: "能力 Agent", href: "/admin/agents", icon: "bot" },
       { id: "impact-graph", label: "影响关系", href: "/admin/impact-graph", icon: "git-fork" },
       { id: "models", label: "模型服务", href: "/admin/models", icon: "boxes" },
       { id: "schedules", label: "定时任务", href: "/admin/schedules", icon: "calendar-clock" },

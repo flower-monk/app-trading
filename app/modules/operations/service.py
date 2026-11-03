@@ -148,6 +148,73 @@ async def model_channel_health_loop() -> None:
         await asyncio.sleep(15)
 
 
+RETENTION_TASK_ID = "maintenance:agent-data-retention"
+
+
+def agent_data_retention_settings() -> dict[str, int | bool]:
+    def configured_int(key: str, default: int, minimum: int, maximum: int) -> int:
+        try:
+            value = int(get_config_value(key, str(default)))
+        except ValueError:
+            value = default
+        return max(minimum, min(maximum, value))
+
+    return {
+        "enabled": get_config_value("agent_retention_enabled", "true") == "true",
+        "interval_seconds": configured_int("agent_retention_interval_seconds", 86400, 3600, 604800),
+        "checkpoint_retention_days": configured_int("agent_checkpoint_retention_days", 14, 1, 3650),
+        "trace_retention_days": configured_int("agent_trace_retention_days", 90, 1, 3650),
+        "artifact_retention_days": configured_int("agent_artifact_retention_days", 180, 1, 3650),
+        "vacuum_after_cleanup": get_config_value("agent_retention_vacuum", "true") == "true",
+    }
+
+
+def run_agent_data_retention() -> dict[str, int | bool]:
+    from app.modules.ai.workflow import cleanup_agent_data
+
+    config = agent_data_retention_settings()
+    result = cleanup_agent_data(
+        checkpoint_retention_days=int(config["checkpoint_retention_days"]),
+        trace_retention_days=int(config["trace_retention_days"]),
+        artifact_retention_days=int(config["artifact_retention_days"]),
+        vacuum_after_cleanup=bool(config["vacuum_after_cleanup"]),
+    )
+    removed = sum(int(result[key]) for key in ("checkpoints", "checkpoint_writes", "spans", "approvals", "runs", "artifacts"))
+    set_config_value("agent_retention_last_run_at", datetime.now(timezone.utc).isoformat())
+    set_config_value("agent_retention_last_status", "completed")
+    set_config_value("agent_retention_last_removed", str(removed))
+    add_event_log(
+        "system", "info", "Agent 数据保留清理完成",
+        f"删除 {removed} 条过期数据，释放 {int(result['reclaimed_bytes'])} 字节。",
+    )
+    return result
+
+
+async def agent_data_retention_loop() -> None:
+    await asyncio.sleep(20)
+    while True:
+        config = agent_data_retention_settings()
+        if not config["enabled"]:
+            await asyncio.sleep(60)
+            continue
+        last_run_at = get_config_value("agent_retention_last_run_at", "")
+        due = not last_run_at
+        if last_run_at:
+            try:
+                last_run = datetime.fromisoformat(last_run_at.replace("Z", "+00:00"))
+                due = datetime.now(timezone.utc) >= last_run + timedelta(seconds=int(config["interval_seconds"]))
+            except ValueError:
+                due = True
+        if due:
+            try:
+                await asyncio.to_thread(run_agent_data_retention)
+            except Exception as exc:  # noqa: BLE001 - maintenance failure must not stop other jobs
+                set_config_value("agent_retention_last_run_at", datetime.now(timezone.utc).isoformat())
+                set_config_value("agent_retention_last_status", "failed")
+                add_event_log("system", "error", "Agent 数据保留清理失败", str(exc)[:500])
+        await asyncio.sleep(60)
+
+
 def run_financial_calendar_cycle(force_sync: bool = False) -> dict[str, object]:
     from app.modules.calendar import service as financial_calendar
 
@@ -324,6 +391,32 @@ def list_scheduled_tasks() -> list[ScheduledTask]:
         next_run_at=schedule_time_after(latest_model_health["created_at"] if latest_model_health else None, model_health_interval) if model_health_enabled else None,
         last_status=latest_model_health["status"] if latest_model_health else None,
     ))
+    retention = agent_data_retention_settings()
+    retention_last_run = get_config_value("agent_retention_last_run_at", "") or None
+    retention_last_status = get_config_value("agent_retention_last_status", "") or None
+    retention_enabled = bool(retention["enabled"])
+    retention_interval = int(retention["interval_seconds"])
+    tasks.append(ScheduledTask(
+        id=RETENTION_TASK_ID, task_type="maintenance", name="Agent 数据保留清理",
+        description="清理过期 checkpoint、运行轨迹、已处理审批和投资产物；不触碰运行中或待审批实例。",
+        owner_id="agent-runtime-retention", owner_name="Agent 运行时",
+        enabled=retention_enabled, effective_enabled=retention_enabled,
+        interval_seconds=retention_interval, minimum_interval_seconds=3600,
+        maximum_interval_seconds=604800,
+        status="paused" if not retention_enabled else "failed" if retention_last_status == "failed" else "scheduled",
+        last_run_at=retention_last_run,
+        next_run_at=(
+            schedule_time_after(retention_last_run, retention_interval)
+            if retention_last_run else (datetime.now(timezone.utc) + timedelta(seconds=retention_interval)).isoformat()
+        ) if retention_enabled else None,
+        last_status=retention_last_status,
+        configuration={
+            "checkpoint_retention_days": int(retention["checkpoint_retention_days"]),
+            "trace_retention_days": int(retention["trace_retention_days"]),
+            "artifact_retention_days": int(retention["artifact_retention_days"]),
+            "vacuum_after_cleanup": bool(retention["vacuum_after_cleanup"]),
+        },
+    ))
 
     with db_connect() as connection:
         source_rows = connection.execute(
@@ -439,7 +532,20 @@ def update_scheduled_task(task_id: str, payload: ScheduledTaskUpdate) -> Schedul
             detail=f"Interval must be between {current.minimum_interval_seconds} and {current.maximum_interval_seconds} seconds",
         )
     enabled = current.enabled if payload.enabled is None else payload.enabled
-    if task_id.startswith("calendar_source:"):
+    if task_id == RETENTION_TASK_ID:
+        set_config_value("agent_retention_enabled", "true" if enabled else "false")
+        set_config_value("agent_retention_interval_seconds", str(interval))
+        retention_updates = {
+            "agent_checkpoint_retention_days": payload.checkpoint_retention_days,
+            "agent_trace_retention_days": payload.trace_retention_days,
+            "agent_artifact_retention_days": payload.artifact_retention_days,
+        }
+        for key, value in retention_updates.items():
+            if value is not None:
+                set_config_value(key, str(value))
+        if payload.vacuum_after_cleanup is not None:
+            set_config_value("agent_retention_vacuum", "true" if payload.vacuum_after_cleanup else "false")
+    elif task_id.startswith("calendar_source:"):
         from app.modules.integrations.service import update_profile as update_data_source_profile
         update_data_source_profile(current.owner_id, DataSourceProfileUpdate(
             enabled=enabled, sync_interval_seconds=interval,
@@ -485,6 +591,13 @@ def bulk_update_scheduled_tasks(payload: ScheduledTaskBulkUpdate) -> ScheduledTa
 
 def run_scheduled_task_now(task_id: str) -> ScheduledTaskRunResult:
     task = get_scheduled_task(task_id)
+    if task_id == RETENTION_TASK_ID:
+        result = run_agent_data_retention()
+        removed = sum(int(result[key]) for key in ("checkpoints", "checkpoint_writes", "spans", "approvals", "runs", "artifacts"))
+        return ScheduledTaskRunResult(
+            task_id=task.id, status="completed",
+            message=f"清理 {removed} 条过期数据，释放 {int(result['reclaimed_bytes'])} 字节；空间整理{'完成' if result['vacuumed'] else '已跳过'}。",
+        )
     if task_id.startswith("calendar_source:"):
         from app.modules.calendar import service as financial_calendar
         sync = financial_calendar.refresh_source(task.owner_id)

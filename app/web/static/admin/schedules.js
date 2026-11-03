@@ -13,12 +13,16 @@ const taskTypeLabels = {
   news_source: "新闻源",
   data_source: "数据源",
   agent: "Agent",
+  model_gateway: "模型服务",
+  maintenance: "数据维护",
 };
 const taskTypeIcons = {
   automation: "activity",
   news_source: "rss",
   data_source: "database-zap",
   agent: "bot",
+  model_gateway: "server-cog",
+  maintenance: "database-backup",
 };
 const statusLabels = {
   scheduled: "已计划",
@@ -120,6 +124,7 @@ function renderMetrics() {
   $("#newsTaskCount").textContent = scheduleState.tasks.filter((task) => task.task_type === "news_source").length;
   $("#dataSourceTaskCount").textContent = scheduleState.tasks.filter((task) => task.task_type === "data_source").length;
   $("#agentTaskCount").textContent = scheduleState.tasks.filter((task) => task.task_type === "agent").length;
+  $("#maintenanceTaskCount").textContent = scheduleState.tasks.filter((task) => task.task_type === "maintenance").length;
 }
 
 function renderSelection() {
@@ -193,6 +198,14 @@ function openScheduleModal(task) {
   $("#scheduleIntervalValue").min = Math.ceil(task.minimum_interval_seconds / unit);
   $("#scheduleIntervalValue").max = Math.floor(task.maximum_interval_seconds / unit);
   $("#scheduleIntervalHint").textContent = `允许范围 ${task.minimum_interval_seconds}-${task.maximum_interval_seconds} 秒`;
+  const isRetention = task.id === "maintenance:agent-data-retention";
+  $("#retentionFields").hidden = !isRetention;
+  if (isRetention) {
+    $("#checkpointRetentionDays").value = task.configuration.checkpoint_retention_days;
+    $("#traceRetentionDays").value = task.configuration.trace_retention_days;
+    $("#artifactRetentionDays").value = task.configuration.artifact_retention_days;
+    $("#vacuumAfterCleanup").checked = task.configuration.vacuum_after_cleanup;
+  }
   $("#scheduleModal").hidden = false;
   window.lucide?.createIcons();
 }
@@ -214,10 +227,17 @@ async function saveSchedule(event) {
   const task = scheduleState.editing;
   if (!task) return;
   const interval = Math.round(Number($("#scheduleIntervalValue").value) * Number($("#scheduleIntervalUnit").value));
+  const payload = { enabled: $("#scheduleEnabled").checked, interval_seconds: interval };
+  if (task.id === "maintenance:agent-data-retention") {
+    payload.checkpoint_retention_days = Number($("#checkpointRetentionDays").value);
+    payload.trace_retention_days = Number($("#traceRetentionDays").value);
+    payload.artifact_retention_days = Number($("#artifactRetentionDays").value);
+    payload.vacuum_after_cleanup = $("#vacuumAfterCleanup").checked;
+  }
   await api(`/api/schedules/${encodeURIComponent(task.id)}`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ enabled: $("#scheduleEnabled").checked, interval_seconds: interval }),
+    body: JSON.stringify(payload),
   });
   closeScheduleModal();
   await loadSchedules();

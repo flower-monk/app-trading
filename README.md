@@ -1038,6 +1038,41 @@ Primary APIs:
 - `GET /api/agent-proposals`
 - `POST /api/agent-proposals/{proposal_id}/approve` or `/reject`
 
+### Agent Studio and Observable Workflows
+
+`/admin/agent-studio` provides a versioned visual control plane above the
+specialized Agents. Administrators can start from a risk, news-impact, or blank
+workflow and connect controlled trigger, resource, Agent, condition, transform,
+approval, and investment-output nodes. Draft edits are validated before an
+immutable version is published; each run remains pinned to that version.
+
+The embedded LangGraph runtime persists checkpoints in SQLite. Every workflow
+run receives a trace ID, and every tool, Agent, condition, approval, and output
+node records a parent-linked span with redacted input, structured output,
+decision summary, timing, model usage, errors, and resource references. The UI
+shows the actual path and timeline without storing or exposing hidden model
+reasoning. Existing capability Agents appear as generated compatibility
+workflows and retain their existing APIs and schedules.
+
+Workflow tools are allow-listed in a typed registry. Read and compute tools are
+`L0`; expiring informational artifacts such as chart markers and risk signals
+are `L1`; durable resource mutations are `L2` and require an approval
+checkpoint. Credentials, platform configuration, and trading actions are `L3`
+and are not exposed to workflows.
+
+Primary workflow APIs:
+
+- `GET/POST/PATCH /api/agent-studio/workflows`
+- `POST /api/agent-studio/workflows/{id}/validate|test|publish|rollback`
+- `GET /api/agent-studio/tools`
+- `GET /api/agent-studio/runs` and `/runs/{id}/trace|stream`
+- `GET/POST /api/agent-studio/approvals`
+- `GET /api/investment-artifacts`
+
+Active `chart_marker` and `risk_signal` artifacts are merged into the existing
+candlestick event track. Their detail includes the producing workflow version
+and a direct link back to the complete run trace.
+
 ## Factor Library and Backtesting
 
 ### Factor Categories
@@ -1708,7 +1743,7 @@ Paper trading is an approximation for research and interface testing. It is not 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
@@ -1779,3 +1814,23 @@ The Compose setup mounts `./app_data.db` to `/app/app_data.db` so local SQLite d
 source .venv/bin/activate
 pytest
 ```
+
+`requirements.txt` contains production runtime dependencies only. Local development
+and test environments should install `requirements-dev.txt`; the production Docker
+image intentionally excludes `pytest` and test files.
+
+### Agent runtime data retention
+
+The unified schedule center includes an **Agent data retention cleanup** task. It is
+enabled by default and runs every 24 hours with these defaults:
+
+- LangGraph checkpoints and pending writes: 14 days.
+- Workflow traces and reviewed approvals: 90 days.
+- Expired or inactive investment artifacts: 180 days.
+- SQLite `VACUUM` after cleanup: enabled.
+
+Open `/admin/schedules`, select **Data maintenance**, and edit the task to change its
+interval, retention windows, enabled state, or disk compaction behavior. Manual runs
+are available from the same table. Queued, running, and approval-waiting workflow
+runs are never deleted. If compaction is blocked by a concurrent database reader,
+deleted pages remain reusable and a later cleanup retries compaction.

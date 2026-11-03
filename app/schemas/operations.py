@@ -141,7 +141,7 @@ class AutomationSettings(BaseModel):
 
 class ScheduledTask(BaseModel):
     id: str
-    task_type: Literal["automation", "news_source", "data_source", "model_gateway", "agent"]
+    task_type: Literal["automation", "news_source", "data_source", "model_gateway", "agent", "maintenance"]
     name: str
     description: str
     owner_id: str
@@ -156,11 +156,16 @@ class ScheduledTask(BaseModel):
     last_run_at: str | None = None
     next_run_at: str | None = None
     last_status: str | None = None
+    configuration: dict[str, int | bool] = Field(default_factory=dict)
 
 
 class ScheduledTaskUpdate(BaseModel):
     enabled: bool | None = None
-    interval_seconds: int | None = Field(default=None, ge=30, le=86400)
+    interval_seconds: int | None = Field(default=None, ge=30, le=604800)
+    checkpoint_retention_days: int | None = Field(default=None, ge=1, le=3650)
+    trace_retention_days: int | None = Field(default=None, ge=1, le=3650)
+    artifact_retention_days: int | None = Field(default=None, ge=1, le=3650)
+    vacuum_after_cleanup: bool | None = None
 
 
 class ScheduledTaskBulkUpdate(BaseModel):

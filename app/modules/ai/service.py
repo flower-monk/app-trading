@@ -61,6 +61,7 @@ from app.schemas import (
     ModelChannelUpdate,
     ModelGatewaySummary,
     ModelInvocation,
+    MODEL_CATALOG_MAX_ITEMS,
     ModelProviderPreset,
     ModelRouteCreate,
     ModelRouteProfile,
@@ -122,7 +123,7 @@ def model_provider_presets() -> list[ModelProviderPreset]:
 
 
 def normalize_model_names(models: list[str]) -> list[str]:
-    return list(dict.fromkeys(item.strip() for item in models if item.strip()))[:200]
+    return list(dict.fromkeys(item.strip() for item in models if item.strip()))[:MODEL_CATALOG_MAX_ITEMS]
 
 
 def validate_model_channel_values(provider_type: str, protocol: str | None, base_url: str | None,
@@ -1344,7 +1345,17 @@ def call_agent_llm(provider: AgentProviderProfile, agent: AgentConfig, rule_outp
     })
 
 
-def enqueue_agent_run(agent_id: str, trigger: str = "manual", symbol: str | None = None, context: dict[str, object] | None = None, test: bool = False) -> AgentRun:
+def enqueue_agent_run(
+    agent_id: str,
+    trigger: str = "manual",
+    symbol: str | None = None,
+    context: dict[str, object] | None = None,
+    test: bool = False,
+    trace_id: str | None = None,
+    parent_run_id: str | None = None,
+    workflow_run_id: str | None = None,
+    parent_span_id: str | None = None,
+) -> AgentRun:
     agent = get_agent(agent_id, require_enabled=not test)
     if trigger not in AGENT_TRIGGER_TYPES:
         raise HTTPException(status_code=422, detail="Unsupported Agent trigger")
@@ -1363,10 +1374,12 @@ def enqueue_agent_run(agent_id: str, trigger: str = "manual", symbol: str | None
     with db_connect() as connection:
         connection.execute(
             """INSERT INTO agent_runs (id, agent_id, agent_name, trigger, symbol, status, runtime_mode, input_payload,
-               output, error, model, prompt_tokens, completion_tokens, latency_ms, test, created_at, started_at, finished_at)
-               VALUES (?, ?, ?, ?, ?, 'queued', ?, ?, NULL, NULL, NULL, 0, 0, 0, ?, ?, NULL, NULL)""",
+               output, error, model, prompt_tokens, completion_tokens, latency_ms, test, created_at, started_at, finished_at,
+               trace_id, parent_run_id, workflow_run_id, parent_span_id)
+               VALUES (?, ?, ?, ?, ?, 'queued', ?, ?, NULL, NULL, NULL, 0, 0, 0, ?, ?, NULL, NULL, ?, ?, ?, ?)""",
             (run_id, agent.id, agent.name, trigger, symbol.upper() if symbol else None, agent.runtime_mode,
-             json.dumps(run_context, ensure_ascii=False), int(test), now),
+             json.dumps(run_context, ensure_ascii=False), int(test), now,
+             trace_id, parent_run_id, workflow_run_id, parent_span_id),
         )
         row = connection.execute("SELECT * FROM agent_runs WHERE id = ?", (run_id,)).fetchone()
     return row_to_agent_run(row)
@@ -1790,6 +1803,9 @@ def enqueue_agent_event(trigger: str, symbol: str | None = None, context: dict[s
         if trigger in agent.triggers:
             enqueue_agent_run(agent.id, trigger=trigger, symbol=symbol, context=context)
             queued += 1
+    from app.modules.ai.workflow import enqueue_workflow_event
+
+    enqueue_workflow_event(trigger, symbol=symbol, context=context)
     return queued
 
 

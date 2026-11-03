@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, Field, SecretStr
 
@@ -12,6 +12,8 @@ ProviderType = Literal[
 ]
 ModelProtocol = Literal["openai_chat", "openai_responses", "azure_openai", "anthropic", "gemini"]
 ChannelHealth = Literal["unknown", "healthy", "degraded", "unavailable", "disabled"]
+MODEL_CATALOG_MAX_ITEMS = 5000
+ModelCatalogName = Annotated[str, Field(min_length=1, max_length=300)]
 
 
 class ModelProviderPreset(BaseModel):
@@ -58,7 +60,7 @@ class ModelChannelCreate(BaseModel):
     api_key: SecretStr | None = Field(default=None, max_length=10000)
     timeout_seconds: int = Field(default=30, ge=3, le=180)
     config: dict[str, object] = Field(default_factory=dict)
-    models: list[str] = Field(default_factory=list, max_length=200)
+    models: list[ModelCatalogName] = Field(default_factory=list, max_length=MODEL_CATALOG_MAX_ITEMS)
     enabled: bool = True
 
 
@@ -71,7 +73,7 @@ class ModelChannelUpdate(BaseModel):
     api_key: SecretStr | None = Field(default=None, max_length=10000)
     timeout_seconds: int | None = Field(default=None, ge=3, le=180)
     config: dict[str, object] | None = None
-    models: list[str] | None = Field(default=None, max_length=200)
+    models: list[ModelCatalogName] | None = Field(default=None, max_length=MODEL_CATALOG_MAX_ITEMS)
     enabled: bool | None = None
 
 
@@ -171,4 +173,3 @@ class PlaygroundChatRequest(BaseModel):
     system_prompt: str = Field(default="", max_length=12000)
     temperature: float | None = Field(default=None, ge=0, le=2)
     max_tokens: int | None = Field(default=None, ge=16, le=32000)
-

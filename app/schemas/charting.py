@@ -168,6 +168,11 @@ class ChartEventPreview(BaseModel):
     impact_score: int
     price_reaction: str
     mapping_reason: Literal["exact", "within_candle", "next_trading_candle"] = "within_candle"
+    origin: Literal["news", "agent_workflow"] = "news"
+    trace_id: str | None = None
+    workflow_id: str | None = None
+    workflow_version: int | None = None
+    run_id: str | None = None
 
 
 class ChartEventMarker(BaseModel):

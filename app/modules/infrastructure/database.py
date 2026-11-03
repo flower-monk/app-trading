@@ -945,6 +945,88 @@ def _initialize_database() -> None:
             """
         )
         connection.execute("CREATE INDEX IF NOT EXISTS idx_agent_proposals_status ON agent_proposals(status, created_at)")
+        ensure_column(connection, "agent_runs", "trace_id", "TEXT")
+        ensure_column(connection, "agent_runs", "parent_run_id", "TEXT")
+        ensure_column(connection, "agent_runs", "workflow_run_id", "TEXT")
+        ensure_column(connection, "agent_runs", "parent_span_id", "TEXT")
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS workflow_definitions (
+                id TEXT PRIMARY KEY, name TEXT NOT NULL, objective TEXT NOT NULL DEFAULT '',
+                status TEXT NOT NULL DEFAULT 'draft', enabled INTEGER NOT NULL DEFAULT 0,
+                draft_version INTEGER NOT NULL DEFAULT 1, published_version INTEGER,
+                draft_graph TEXT NOT NULL, created_by TEXT NOT NULL,
+                created_at TEXT NOT NULL, updated_at TEXT NOT NULL
+            )
+            """
+        )
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_workflow_definitions_status ON workflow_definitions(status, updated_at)")
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS workflow_versions (
+                id TEXT PRIMARY KEY, workflow_id TEXT NOT NULL, version INTEGER NOT NULL,
+                graph TEXT NOT NULL, content_hash TEXT NOT NULL, published_by TEXT NOT NULL,
+                created_at TEXT NOT NULL, UNIQUE(workflow_id, version),
+                FOREIGN KEY(workflow_id) REFERENCES workflow_definitions(id)
+            )
+            """
+        )
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS workflow_runs (
+                id TEXT PRIMARY KEY, workflow_id TEXT NOT NULL, workflow_name TEXT NOT NULL,
+                workflow_version INTEGER NOT NULL, trace_id TEXT NOT NULL UNIQUE,
+                trigger TEXT NOT NULL, status TEXT NOT NULL, symbol TEXT,
+                input_payload TEXT NOT NULL, output TEXT, error TEXT,
+                test INTEGER NOT NULL DEFAULT 0, checkpoint_thread_id TEXT,
+                created_at TEXT NOT NULL, started_at TEXT, finished_at TEXT,
+                FOREIGN KEY(workflow_id) REFERENCES workflow_definitions(id)
+            )
+            """
+        )
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_workflow_runs_queue ON workflow_runs(status, created_at)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_workflow_runs_workflow ON workflow_runs(workflow_id, created_at)")
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS workflow_spans (
+                id TEXT PRIMARY KEY, trace_id TEXT NOT NULL, run_id TEXT NOT NULL, parent_span_id TEXT,
+                node_id TEXT NOT NULL, node_name TEXT NOT NULL, kind TEXT NOT NULL, operation TEXT NOT NULL,
+                status TEXT NOT NULL, input_payload TEXT NOT NULL DEFAULT '{}', output TEXT,
+                decision_summary TEXT NOT NULL DEFAULT '', resource_refs TEXT NOT NULL DEFAULT '[]',
+                model TEXT, prompt_tokens INTEGER NOT NULL DEFAULT 0,
+                completion_tokens INTEGER NOT NULL DEFAULT 0, retry_count INTEGER NOT NULL DEFAULT 0,
+                latency_ms INTEGER NOT NULL DEFAULT 0, error TEXT, started_at TEXT NOT NULL, finished_at TEXT,
+                FOREIGN KEY(run_id) REFERENCES workflow_runs(id)
+            )
+            """
+        )
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_workflow_spans_trace ON workflow_spans(trace_id, started_at)")
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS workflow_approvals (
+                id TEXT PRIMARY KEY, run_id TEXT NOT NULL, span_id TEXT NOT NULL, node_id TEXT NOT NULL,
+                title TEXT NOT NULL, payload TEXT NOT NULL, status TEXT NOT NULL DEFAULT 'pending',
+                reviewed_by TEXT, review_note TEXT, created_at TEXT NOT NULL, reviewed_at TEXT,
+                FOREIGN KEY(run_id) REFERENCES workflow_runs(id), FOREIGN KEY(span_id) REFERENCES workflow_spans(id)
+            )
+            """
+        )
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_workflow_approvals_status ON workflow_approvals(status, created_at)")
+        connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS investment_artifacts (
+                id TEXT PRIMARY KEY, artifact_type TEXT NOT NULL, title TEXT NOT NULL, summary TEXT NOT NULL,
+                scope_type TEXT NOT NULL, scope_ids TEXT NOT NULL, direction TEXT NOT NULL,
+                severity TEXT NOT NULL, confidence REAL NOT NULL, evidence TEXT NOT NULL,
+                payload TEXT NOT NULL, workflow_id TEXT NOT NULL, workflow_version INTEGER NOT NULL,
+                run_id TEXT NOT NULL, trace_id TEXT NOT NULL, span_id TEXT NOT NULL,
+                status TEXT NOT NULL DEFAULT 'active', valid_from TEXT NOT NULL, valid_until TEXT NOT NULL,
+                created_at TEXT NOT NULL, FOREIGN KEY(run_id) REFERENCES workflow_runs(id)
+            )
+            """
+        )
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_investment_artifacts_scope ON investment_artifacts(artifact_type, status, valid_until)")
+        connection.execute("CREATE INDEX IF NOT EXISTS idx_investment_artifacts_trace ON investment_artifacts(trace_id)")
         connection.execute(
             """
             CREATE TABLE IF NOT EXISTS news_article_symbol_tags (
@@ -1276,4 +1358,3 @@ def init_db() -> None:
             return
         _initialize_database()
         _INITIALIZED_DB_PATHS.add(database_key)
-

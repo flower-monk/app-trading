@@ -44,7 +44,7 @@
       throw new Error(translate("登录状态已失效"));
     }
     const body = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(body.detail || translate("请求失败"));
+    if (!response.ok) throw new Error(responseErrorDetail(body.detail));
     return body;
   }
 
@@ -213,6 +213,7 @@
     select("#modelChannelModels").value = (item?.models || []).join("\n");
     select("#modelChannelConfig").value = JSON.stringify(item?.config || {}, null, 2);
     select("#modelChannelEnabled").checked = item?.enabled ?? true;
+    showChannelError();
     if (!item) applyChannelPreset();
     select("#modelChannelModal").hidden = false;
   }
@@ -220,6 +221,20 @@
   function closeChannel() {
     select("#modelChannelModal").hidden = true;
     modelState.editingChannel = null;
+    showChannelError();
+    setChannelSaving(false);
+  }
+
+  function showChannelError(message = "") {
+    const node = select("#modelChannelFormError");
+    node.textContent = message;
+    node.hidden = !message;
+  }
+
+  function setChannelSaving(saving) {
+    const button = select("#modelChannelSave");
+    button.disabled = saving;
+    button.textContent = translate(saving ? "保存中..." : "保存渠道");
   }
 
   function addTargetRow(target = {}) {
@@ -342,7 +357,10 @@
 
   function responseErrorDetail(detail) {
     if (typeof detail === "string") return detail;
-    if (Array.isArray(detail)) return detail.map((item) => item?.msg || JSON.stringify(item)).join("; ");
+    if (Array.isArray(detail)) return detail.map((item) => {
+      const field = Array.isArray(item?.loc) ? item.loc.filter((part) => part !== "body").join(".") : "";
+      return `${field ? `${field}: ` : ""}${item?.msg || JSON.stringify(item)}`;
+    }).join("; ");
     return translate("请求失败");
   }
 
@@ -476,6 +494,8 @@
 
     select("#modelChannelForm").addEventListener("submit", async (event) => {
       event.preventDefault();
+      showChannelError();
+      setChannelSaving(true);
       try {
         const payload = {
           name: select("#modelChannelName").value.trim(),
@@ -497,7 +517,11 @@
         closeChannel();
         await reloadAll();
         showNotice(translate("模型渠道已保存。"));
-      } catch (error) { showNotice(error.message, "error"); }
+      } catch (error) {
+        showChannelError(error instanceof SyntaxError ? translate("高级配置 JSON 格式不正确。") : error.message);
+      } finally {
+        setChannelSaving(false);
+      }
     });
 
     select("#modelRouteForm").addEventListener("submit", async (event) => {
